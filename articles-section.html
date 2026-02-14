@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أحدث المقالات - فولتا ماكس</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Swiper CSS للسلايدر -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- AOS (Animate On Scroll) CSS للتأثيرات الحركية -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ============================================
+   متغيرات الألوان الأساسية
+   ============================================ */
+:root {
+    --primary-dark: #001f3f;      /* أزرق غامق */
+    --primary-light: #0051ba;     /* أزرق فاتح */
+    --accent-red: #e63946;        /* أحمر */
+    --white: #ffffff;             /* أبيض */
+    --gray-light: #f8f9fa;        /* رمادي فاتح */
+    --gray-dark: #495057;         /* رمادي غامق */
+    --text-dark: #212529;         /* نص غامق */
+    --border-color: #dee2e6;      /* لون الحدود */
+}
+
+/* ============================================
+   الأنماط الأساسية
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* ============================================
+   قسم المقالات - الحاوية الرئيسية
+   ============================================ */
+.articles-section {
+    background: linear-gradient(135deg, var(--white) 0%, var(--gray-light) 100%);
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.articles-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(0, 31, 63, 0.05);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.articles-section::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: rgba(230, 57, 70, 0.05);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.articles-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   رأس القسم
+   ============================================ */
+.section-header {
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-dark), var(--accent-red));
+    border-radius: 2px;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-dark);
+    margin-top: 30px;
+}
+
+.title-underline {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-dark), var(--accent-red));
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+/* ============================================
+   السلايدر (Swiper)
+   ============================================ */
+.articles-slider {
+    padding: 20px 0;
+    position: relative;
+}
+
+.swiper-wrapper {
+    padding: 20px 0;
+}
+
+.swiper-slide {
+    height: auto;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.swiper-slide-active {
+    opacity: 1;
+}
+
+/* ============================================
+   بطاقة المقالة
+   ============================================ */
+.article-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 31, 63, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.article-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 31, 63, 0.2);
+    border-color: var(--primary-light);
+}
+
+/* ============================================
+   صورة المقالة
+   ============================================ */
+.article-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    background: var(--gray-light);
+}
+
+.article-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.article-card:hover .article-image {
+    transform: scale(1.1);
+}
+
+/* الطبقة العلوية عند التمرير */
+.article-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 31, 63, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.article-card:hover .article-overlay {
+    opacity: 1;
+}
+
+/* زر اقرأ المزيد */
+.read-more-btn {
+    background: var(--accent-red);
+    color: var(--white);
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    border: 2px solid var(--accent-red);
+}
+
+.read-more-btn:hover {
+    background: transparent;
+    color: var(--accent-red);
+    transform: scale(1.05);
+}
+
+/* تاريخ المقالة */
+.article-date {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--accent-red);
+    color: var(--white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 1;
+    animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   محتوى المقالة
+   ============================================ */
+.article-content {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.article-card:hover .article-title {
+    color: var(--accent-red);
+}
+
+.article-excerpt {
+    font-size: 0.95rem;
+    color: var(--gray-dark);
+    margin-bottom: 15px;
+    flex-grow: 1;
+    line-height: 1.6;
+}
+
+/* ============================================
+   بيانات المقالة (الفئة والكاتب)
+   ============================================ */
+.article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.article-category {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: var(--white);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.article-author {
+    color: var(--gray-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ============================================
+   أزرار التنقل (Navigation Buttons)
+   ============================================ */
+.articles-button-prev,
+.articles-button-next {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+.articles-button-prev:hover,
+.articles-button-next:hover {
+    background: var(--accent-red);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.articles-button-prev {
+    right: -30px;
+}
+
+.articles-button-next {
+    left: -30px;
+}
+
+.articles-button-prev::after,
+.articles-button-next::after {
+    content: none;
+}
+
+/* ============================================
+   نقاط التنقل (Pagination)
+   ============================================ */
+.articles-pagination {
+    bottom: -40px;
+}
+
+.swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: var(--gray-dark);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--accent-red);
+    opacity: 1;
+    width: 30px;
+    border-radius: 6px;
+}
+
+/* ============================================
+   زر عرض جميع المقالات
+   ============================================ */
+.btn-view-all {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: var(--white);
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+    margin-top: 30px;
+}
+
+.btn-view-all:hover {
+    background: var(--accent-red);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
+    color: var(--white);
+}
+
+.btn-view-all:active {
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   التأثيرات الحركية (Animations)
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   الاستجابة للشاشات الصغيرة (Mobile)
+   ============================================ */
+@media (max-width: 768px) {
+    .articles-section {
+        padding: 40px 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+    }
+
+    .article-image-wrapper {
+        height: 200px;
+    }
+
+    .article-content {
+        padding: 20px;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+    }
+
+    .article-excerpt {
+        font-size: 0.9rem;
+    }
+
+    .articles-button-prev,
+    .articles-button-next {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .articles-button-prev {
+        right: -20px;
+    }
+
+    .articles-button-next {
+        left: -20px;
+    }
+
+    .article-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .articles-section {
+        padding: 30px 0;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .article-image-wrapper {
+        height: 180px;
+    }
+
+    .article-content {
+        padding: 15px;
+    }
+
+    .article-title {
+        font-size: 1rem;
+    }
+
+    .article-excerpt {
+        font-size: 0.85rem;
+    }
+
+    .article-date {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .read-more-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .btn-view-all {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    .articles-button-prev,
+    .articles-button-next {
+        display: none;
+    }
+}
+
+/* ============================================
+   تأثيرات إضافية للتفاعل
+   ============================================ */
+.article-card {
+    position: relative;
+}
+
+.article-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.article-card:hover::before {
+    left: 100%;
+}
+
+    </style>
+</head>
+<body>
+    <!-- قسم المقالات -->
+    <section class="articles-section py-5">
+        <div class="container">
+            <!-- العنوان الرئيسي -->
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">أحدث المقالات</h2>
+                <p class="section-subtitle">تعرف على آخر المستجدات والنصائح في مجال الطاقة الشمسية</p>
+                <div class="title-underline"></div>
+            </div>
+
+            <!-- السلايدر -->
+            <div class="swiper articles-slider" data-aos="fade-up" data-aos-delay="200">
+                <div class="swiper-wrapper">
+                    <!-- المقالة 1 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=500&h=300&fit=crop" alt="الطاقة الشمسية" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">15 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">فوائد الطاقة الشمسية للمنازل</h3>
+                                <p class="article-excerpt">اكتشف كيف يمكن للطاقة الشمسية أن توفر لك المال وتحمي البيئة في نفس الوقت...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">الطاقة المتجددة</span>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المقالة 2 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1497440871519-89386ab57aae?w=500&h=300&fit=crop" alt="الألواح الشمسية" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">12 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">كيفية اختيار الألواح الشمسية المناسبة</h3>
+                                <p class="article-excerpt">دليل شامل لاختيار أفضل الألواح الشمسية التي تناسب احتياجاتك...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">التثبيت والصيانة</span>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المقالة 3 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1509391366360-2e938aa1ef14?w=500&h=300&fit=crop" alt="الاستثمار الأخضر" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">10 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">الاستثمار في الطاقة الشمسية</h3>
+                                <p class="article-excerpt">تعرف على العوائد المالية والفوائد البيئية للاستثمار في الطاقة الشمسية...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">الاستثمار</span>
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المقالة 4 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1466611653022-2f02b06b6c58?w=500&h=300&fit=crop" alt="تكنولوجيا الطاقة" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">8 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">أحدث التقنيات في الطاقة الشمسية</h3>
+                                <p class="article-excerpt">اكتشف أحدث الابتكارات والتطورات التكنولوجية في مجال الطاقة الشمسية...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">التكنولوجيا</span>
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المقالة 5 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop" alt="الصيانة الدورية" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">5 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">نصائح الصيانة الدورية للألواح الشمسية</h3>
+                                <p class="article-excerpt">تعرف على كيفية الحفاظ على كفاءة الألواح الشمسية لديك...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">الصيانة</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المقالة 6 -->
+                    <div class="swiper-slide">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&h=300&fit=crop" alt="البيئة والاستدامة" class="article-image">
+                                <div class="article-overlay">
+                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
+                                </div>
+                                <span class="article-date">1 فبراير 2026</span>
+                            </div>
+                            <div class="article-content">
+                                <h3 class="article-title">تأثير الطاقة الشمسية على البيئة</h3>
+                                <p class="article-excerpt">دراسة شاملة عن الفوائد البيئية للطاقة الشمسية والاستدامة...</p>
+                                <div class="article-meta">
+                                    <span class="article-category">البيئة</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أزرار التنقل -->
+                <div class="swiper-button-prev articles-button-prev">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="swiper-button-next articles-button-next">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <!-- النقاط (Pagination) -->
+                <div class="swiper-pagination articles-pagination"></div>
+            </div>
+
+            <!-- زر عرض جميع المقالات -->
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+                <a href="#" class="btn btn-view-all">عرض جميع المقالات</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // ============================================
+// تهيئة AOS (Animate On Scroll)
+// ============================================
+AOS.init({
+    duration: 800,
+    easing: 'ease-in-out-quad',
+    once: false,
+    offset: 100
+});
+
+// ============================================
+// تهيئة Swiper (السلايدر)
+// ============================================
+const articlesSlider = new Swiper('.articles-slider', {
+    // نوع الحلقة
+    loop: true,
+    
+    // السرعة والتأثيرات
+    speed: 800,
+    effect: 'slide',
+    
+    // التنقل بالأزرار
+    navigation: {
+        nextEl: '.articles-button-next',
+        prevEl: '.articles-button-prev',
+    },
+    
+    // نقاط التنقل (Pagination)
+    pagination: {
+        el: '.articles-pagination',
+        clickable: true,
+        dynamicBullets: true,
+    },
+    
+    // الاستجابة للشاشات المختلفة
+    breakpoints: {
+        // شاشات صغيرة جداً (الهواتف)
+        320: {
+            slidesPerView: 1,
+            spaceBetween: 15,
+            centeredSlides: true,
+        },
+        // شاشات صغيرة (الهواتف الكبيرة)
+        576: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            centeredSlides: true,
+        },
+        // شاشات متوسطة (الأجهزة اللوحية)
+        768: {
+            slidesPerView: 2,
+            spaceBetween: 25,
+            centeredSlides: false,
+        },
+        // شاشات كبيرة (أجهزة الكمبيوتر)
+        1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            centeredSlides: false,
+        },
+        // شاشات كبيرة جداً
+        1440: {
+            slidesPerView: 3,
+            spaceBetween: 35,
+            centeredSlides: false,
+        },
+    },
+    
+    // التمرير التلقائي
+    autoplay: {
+        delay: 5000, // 5 ثوان
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+    },
+    
+    // التأثيرات الإضافية
+    grabCursor: true,
+    watchSlidesProgress: true,
+    
+    // معالج الأحداث
+    on: {
+        slideChange: function() {
+            // يمكن إضافة تأثيرات إضافية عند تغيير الشريحة
+            console.log('تم تغيير الشريحة إلى:', this.activeIndex);
+        },
+    }
+});
+
+// ============================================
+// تأثيرات إضافية عند تحميل الصفحة
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // إضافة تأثير التحميل
+    const articleCards = document.querySelectorAll('.article-card');
+    
+    articleCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // إضافة تأثير عند الضغط على الأزرار
+    const buttons = document.querySelectorAll('.read-more-btn, .btn-view-all');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // تأثير الموجة (Ripple effect)
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+    
+    // تأثير التمرير على الصفحة
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.scrollY;
+        const parallaxElements = document.querySelectorAll('.article-image');
+        
+        parallaxElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementHeight = element.offsetHeight;
+            
+            if (elementTop < window.innerHeight && elementTop + elementHeight > 0) {
+                const yPos = (scrollTop - element.offsetParent.offsetTop) * 0.5;
+                element.style.backgroundPosition = `center ${yPos}px`;
+            }
+        });
+    });
+});
+
+// ============================================
+// إضافة أنماط CSS للتأثيرات الديناميكية
+// ============================================
+const style = document.createElement('style');
+style.textContent = `
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scale(0);
+        animation: ripple-animation 0.6s ease-out;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    /* تأثير التركيز على الأزرار */
+    .read-more-btn:focus,
+    .btn-view-all:focus {
+        outline: 2px solid var(--accent-red);
+        outline-offset: 2px;
+    }
+    
+    /* تأثير التحميل */
+    @keyframes loadingPulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// ============================================
+// معالج الأخطاء والتحقق من التوافقية
+// ============================================
+if (!window.Swiper) {
+    console.error('مكتبة Swiper لم يتم تحميلها بنجاح');
+}
+
+if (!window.AOS) {
+    console.error('مكتبة AOS لم يتم تحميلها بنجاح');
+}
+
+// ============================================
+// دالة مساعدة لإضافة مقالات جديدة ديناميكياً
+// ============================================
+function addNewArticle(articleData) {
+    const swiperWrapper = document.querySelector('.swiper-wrapper');
+    
+    const newSlide = document.createElement('div');
+    newSlide.className = 'swiper-slide';
+    newSlide.innerHTML = `
+        <div class="article-card">
+            <div class="article-image-wrapper">
+                <img src="${articleData.image}" alt="${articleData.title}" class="article-image">
+                <div class="article-overlay">
+                    <a href="${articleData.link}" class="read-more-btn">اقرأ المزيد</a>
+                </div>
+                <span class="article-date">${articleData.date}</span>
+            </div>
+            <div class="article-content">
+                <h3 class="article-title">${articleData.title}</h3>
+                <p class="article-excerpt">${articleData.excerpt}</p>
+                <div class="article-meta">
+                    <span class="article-category">${articleData.category}</span>
+                    <span class="article-author">${articleData.author}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    swiperWrapper.appendChild(newSlide);
+    articlesSlider.update();
+    AOS.refresh();
+}
+
+// ============================================
+// مثال على استخدام دالة إضافة مقالة جديدة
+// ============================================
+// addNewArticle({
+//     image: 'https://example.com/image.jpg',
+//     title: 'عنوان المقالة الجديدة',
+//     excerpt: 'وصف مختصر للمقالة',
+//     date: '13 فبراير 2026',
+//     category: 'الفئة',
+//     author: 'اسم الكاتب',
+//     link: '#'
+// });
+
+// ============================================
+// تحسينات الأداء والتحسين
+// ============================================
+// تحميل الصور بشكل كسول (Lazy Loading)
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src || img.src;
+                img.classList.add('loaded');
+                observer.unobserve(img);
+            }
+        });
+    });
+    
+    document.querySelectorAll('.article-image').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+    </script>
+</body>
+</html>
