@@ -3,1012 +3,659 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أحدث المقالات - فولتا ماكس</title>
+    <title>نظام الحوالات الذكي | الإصدار الاحترافي</title>
     
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
-    <!-- Swiper CSS للسلايدر -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    
-    <!-- AOS (Animate On Scroll) CSS للتأثيرات الحركية -->
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    
-    <!-- Font Awesome للأيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
     <style>
-        /* ============================================
-   متغيرات الألوان الأساسية
-   ============================================ */
-:root {
-    --primary-dark: #001f3f;      /* أزرق غامق */
-    --primary-light: #0051ba;     /* أزرق فاتح */
-    --accent-red: #e63946;        /* أحمر */
-    --white: #ffffff;             /* أبيض */
-    --gray-light: #f8f9fa;        /* رمادي فاتح */
-    --gray-dark: #495057;         /* رمادي غامق */
-    --text-dark: #212529;         /* نص غامق */
-    --border-color: #dee2e6;      /* لون الحدود */
-}
-
-/* ============================================
-   الأنماط الأساسية
-   ============================================ */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--text-dark);
-    line-height: 1.6;
-}
-
-/* ============================================
-   قسم المقالات - الحاوية الرئيسية
-   ============================================ */
-.articles-section {
-    background: linear-gradient(135deg, var(--white) 0%, var(--gray-light) 100%);
-    padding: 60px 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.articles-section::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: rgba(0, 31, 63, 0.05);
-    border-radius: 50%;
-    z-index: 0;
-}
-
-.articles-section::after {
-    content: '';
-    position: absolute;
-    bottom: -20%;
-    left: -5%;
-    width: 300px;
-    height: 300px;
-    background: rgba(230, 57, 70, 0.05);
-    border-radius: 50%;
-    z-index: 0;
-}
-
-.articles-section .container {
-    position: relative;
-    z-index: 1;
-}
-
-/* ============================================
-   رأس القسم
-   ============================================ */
-.section-header {
-    margin-bottom: 50px;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 15px;
-    position: relative;
-    display: inline-block;
-}
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-dark), var(--accent-red));
-    border-radius: 2px;
-}
-
-.section-subtitle {
-    font-size: 1.1rem;
-    color: var(--gray-dark);
-    margin-top: 30px;
-}
-
-.title-underline {
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-dark), var(--accent-red));
-    margin: 20px auto;
-    border-radius: 2px;
-}
-
-/* ============================================
-   السلايدر (Swiper)
-   ============================================ */
-.articles-slider {
-    padding: 20px 0;
-    position: relative;
-}
-
-.swiper-wrapper {
-    padding: 20px 0;
-}
-
-.swiper-slide {
-    height: auto;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-}
-
-.swiper-slide-active {
-    opacity: 1;
-}
-
-/* ============================================
-   بطاقة المقالة
-   ============================================ */
-.article-card {
-    background: var(--white);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 31, 63, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--border-color);
-}
-
-.article-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 31, 63, 0.2);
-    border-color: var(--primary-light);
-}
-
-/* ============================================
-   صورة المقالة
-   ============================================ */
-.article-image-wrapper {
-    position: relative;
-    overflow: hidden;
-    height: 250px;
-    background: var(--gray-light);
-}
-
-.article-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.article-card:hover .article-image {
-    transform: scale(1.1);
-}
-
-/* الطبقة العلوية عند التمرير */
-.article-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 31, 63, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2;
-}
-
-.article-card:hover .article-overlay {
-    opacity: 1;
-}
-
-/* زر اقرأ المزيد */
-.read-more-btn {
-    background: var(--accent-red);
-    color: var(--white);
-    padding: 12px 30px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-block;
-    border: 2px solid var(--accent-red);
-}
-
-.read-more-btn:hover {
-    background: transparent;
-    color: var(--accent-red);
-    transform: scale(1.05);
-}
-
-/* تاريخ المقالة */
-.article-date {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: var(--accent-red);
-    color: var(--white);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    z-index: 1;
-    animation: slideInDown 0.5s ease;
-}
-
-@keyframes slideInDown {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* ============================================
-   محتوى المقالة
-   ============================================ */
-.article-content {
-    padding: 25px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.article-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 12px;
-    line-height: 1.4;
-    transition: color 0.3s ease;
-}
-
-.article-card:hover .article-title {
-    color: var(--accent-red);
-}
-
-.article-excerpt {
-    font-size: 0.95rem;
-    color: var(--gray-dark);
-    margin-bottom: 15px;
-    flex-grow: 1;
-    line-height: 1.6;
-}
-
-/* ============================================
-   بيانات المقالة (الفئة والكاتب)
-   ============================================ */
-.article-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid var(--border-color);
-    margin-top: auto;
-}
-
-.article-category {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
-    color: var(--white);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.article-author {
-    color: var(--gray-dark);
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-/* ============================================
-   أزرار التنقل (Navigation Buttons)
-   ============================================ */
-.articles-button-prev,
-.articles-button-next {
-    width: 50px;
-    height: 50px;
-    background: var(--primary-dark);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 10;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.2rem;
-}
-
-.articles-button-prev:hover,
-.articles-button-next:hover {
-    background: var(--accent-red);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.articles-button-prev {
-    right: -30px;
-}
-
-.articles-button-next {
-    left: -30px;
-}
-
-.articles-button-prev::after,
-.articles-button-next::after {
-    content: none;
-}
-
-/* ============================================
-   نقاط التنقل (Pagination)
-   ============================================ */
-.articles-pagination {
-    bottom: -40px;
-}
-
-.swiper-pagination-bullet {
-    width: 12px;
-    height: 12px;
-    background: var(--gray-dark);
-    opacity: 0.5;
-    transition: all 0.3s ease;
-}
-
-.swiper-pagination-bullet-active {
-    background: var(--accent-red);
-    opacity: 1;
-    width: 30px;
-    border-radius: 6px;
-}
-
-/* ============================================
-   زر عرض جميع المقالات
-   ============================================ */
-.btn-view-all {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
-    color: var(--white);
-    padding: 15px 40px;
-    border-radius: 50px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-decoration: none;
-    margin-top: 30px;
-}
-
-.btn-view-all:hover {
-    background: var(--accent-red);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
-    color: var(--white);
-}
-
-.btn-view-all:active {
-    transform: translateY(-1px);
-}
-
-/* ============================================
-   التأثيرات الحركية (Animations)
-   ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
-}
-
-/* ============================================
-   الاستجابة للشاشات الصغيرة (Mobile)
-   ============================================ */
-@media (max-width: 768px) {
-    .articles-section {
-        padding: 40px 0;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .section-subtitle {
-        font-size: 1rem;
-    }
-
-    .article-image-wrapper {
-        height: 200px;
-    }
-
-    .article-content {
-        padding: 20px;
-    }
-
-    .article-title {
-        font-size: 1.1rem;
-    }
-
-    .article-excerpt {
-        font-size: 0.9rem;
-    }
-
-    .articles-button-prev,
-    .articles-button-next {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-
-    .articles-button-prev {
-        right: -20px;
-    }
-
-    .articles-button-next {
-        left: -20px;
-    }
-
-    .article-meta {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-}
-
-@media (max-width: 576px) {
-    .articles-section {
-        padding: 30px 0;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-    }
-
-    .section-subtitle {
-        font-size: 0.95rem;
-    }
-
-    .article-image-wrapper {
-        height: 180px;
-    }
-
-    .article-content {
-        padding: 15px;
-    }
-
-    .article-title {
-        font-size: 1rem;
-    }
-
-    .article-excerpt {
-        font-size: 0.85rem;
-    }
-
-    .article-date {
-        font-size: 0.75rem;
-        padding: 4px 8px;
-    }
-
-    .read-more-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-
-    .btn-view-all {
-        padding: 12px 30px;
-        font-size: 1rem;
-    }
-
-    .articles-button-prev,
-    .articles-button-next {
-        display: none;
-    }
-}
-
-/* ============================================
-   تأثيرات إضافية للتفاعل
-   ============================================ */
-.article-card {
-    position: relative;
-}
-
-.article-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.article-card:hover::before {
-    left: 100%;
-}
-
+        :root {
+            --orange-main: #faa619;
+            --green-main: #1a953e;
+            --bg-light: #fdfcfb;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: #333;
+        }
+
+        /* الهيدر */
+        .main-header {
+            background: linear-gradient(135deg, var(--orange-main) 0%, #e69500 100%);
+            color: white;
+            padding: 20px 0;
+            border-bottom: 5px solid var(--green-main);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .border-orange {
+            border-top: 5px solid var(--orange-main) !important;
+        }
+
+        .border-green {
+            border-top: 5px solid var(--green-main) !important;
+        }
+
+        .btn-orange {
+            background-color: var(--orange-main);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-orange:hover {
+            background-color: #e69500;
+            color: white;
+        }
+
+        .btn-green {
+            background-color: var(--green-main);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-green:hover {
+            background-color: #147a32;
+            color: white;
+        }
+
+        /* تنسيق الجدول */
+        .table thead {
+            background-color: var(--green-main);
+            color: white;
+            cursor: pointer;
+        }
+
+        .table thead th:hover {
+            background-color: #147a32;
+        }
+
+        /* الحوالة المكتملة */
+        .row-completed {
+            background-color: #e8f5e9 !important;
+            transition: 0.4s;
+            position: relative;
+        }
+
+        .row-completed td {
+            color: #1a953e !important;
+            opacity: 0.7;
+        }
+
+        .done-label {
+            color: var(--green-main);
+            font-weight: bold;
+            display: none;
+        }
+
+        .row-completed .done-label {
+            display: inline;
+        }
+
+        .row-completed .btn-status {
+            display: none;
+        }
+
+        .name-alert {
+            border-right: 5px solid #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .copyable {
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .copyable:hover {
+            background-color: #fff9f0;
+            color: var(--orange-main);
+        }
+
+        .copyable:after {
+            content: "نسخ";
+            position: absolute;
+            bottom: -20px;
+            right: 50%;
+            transform: translateX(50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .copyable:hover:after {
+            opacity: 1;
+            bottom: -25px;
+        }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            z-index: 9999;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .word-highlight {
+            font-size: 2.5rem;
+            color: var(--orange-main);
+            font-weight: 900;
+            background: #fff9f0;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px solid var(--orange-main);
+            margin-bottom: 20px;
+        }
+
+        /* زر للتعديل مع توضيح الوظيفة */
+        .recipient-name {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .edit-icon {
+            opacity: 2;
+            color: #1a953e;
+            margin-right: 5px;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .recipient-cell:hover .edit-icon {
+            opacity: 1;
+        }
+
+        .recipient-text {
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        /* تحسينات الاستجابة */
+        @media (max-width: 768px) {
+            .table-responsive {
+                border-radius: 15px;
+                overflow: hidden;
+            }
+            
+            .btn-group-sm {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .main-header {
+                padding: 15px 0;
+            }
+            
+            .main-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 15px !important;
+            }
+            
+            .btn-lg {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .stats-card {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* توضيح للمستخدم أن هناك خاصية نسخ بالنقر */
+        .click-to-copy-hint {
+            background: #fffaf0;
+            border: 1px dashed var(--orange-main);
+            border-radius: 8px;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #e69500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
-    <!-- قسم المقالات -->
-    <section class="articles-section py-5">
-        <div class="container">
-            <!-- العنوان الرئيسي -->
-            <div class="section-header text-center mb-5" data-aos="fade-up">
-                <h2 class="section-title">أحدث المقالات</h2>
-                <p class="section-subtitle">تعرف على آخر المستجدات والنصائح في مجال الطاقة الشمسية</p>
-                <div class="title-underline"></div>
-            </div>
 
-            <!-- السلايدر -->
-            <div class="swiper articles-slider" data-aos="fade-up" data-aos-delay="200">
-                <div class="swiper-wrapper">
-                    <!-- المقالة 1 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=500&h=300&fit=crop" alt="الطاقة الشمسية" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">15 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">فوائد الطاقة الشمسية للمنازل</h3>
-                                <p class="article-excerpt">اكتشف كيف يمكن للطاقة الشمسية أن توفر لك المال وتحمي البيئة في نفس الوقت...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">الطاقة المتجددة</span>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="main-header text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-1"><i class="bi bi-shield-fill-check me-2"></i> المحلل الذكي للحوالات</h2>
+        <p class="mb-0 opacity-90">نظام الفرز الآلي وتفكيك النصوص الملتصقة</p>
+    </div>
+</div>
 
-                    <!-- المقالة 2 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1497440871519-89386ab57aae?w=500&h=300&fit=crop" alt="الألواح الشمسية" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">12 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">كيفية اختيار الألواح الشمسية المناسبة</h3>
-                                <p class="article-excerpt">دليل شامل لاختيار أفضل الألواح الشمسية التي تناسب احتياجاتك...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">التثبيت والصيانة</span>
-                                 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- المقالة 3 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1509391366360-2e938aa1ef14?w=500&h=300&fit=crop" alt="الاستثمار الأخضر" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">10 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">الاستثمار في الطاقة الشمسية</h3>
-                                <p class="article-excerpt">تعرف على العوائد المالية والفوائد البيئية للاستثمار في الطاقة الشمسية...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">الاستثمار</span>
-                                 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- المقالة 4 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1466611653022-2f02b06b6c58?w=500&h=300&fit=crop" alt="تكنولوجيا الطاقة" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">8 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">أحدث التقنيات في الطاقة الشمسية</h3>
-                                <p class="article-excerpt">اكتشف أحدث الابتكارات والتطورات التكنولوجية في مجال الطاقة الشمسية...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">التكنولوجيا</span>
-                                  
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- المقالة 5 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop" alt="الصيانة الدورية" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">5 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">نصائح الصيانة الدورية للألواح الشمسية</h3>
-                                <p class="article-excerpt">تعرف على كيفية الحفاظ على كفاءة الألواح الشمسية لديك...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">الصيانة</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- المقالة 6 -->
-                    <div class="swiper-slide">
-                        <div class="article-card">
-                            <div class="article-image-wrapper">
-                                <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&h=300&fit=crop" alt="البيئة والاستدامة" class="article-image">
-                                <div class="article-overlay">
-                                    <a href="#" class="read-more-btn">اقرأ المزيد</a>
-                                </div>
-                                <span class="article-date">1 فبراير 2026</span>
-                            </div>
-                            <div class="article-content">
-                                <h3 class="article-title">تأثير الطاقة الشمسية على البيئة</h3>
-                                <p class="article-excerpt">دراسة شاملة عن الفوائد البيئية للطاقة الشمسية والاستدامة...</p>
-                                <div class="article-meta">
-                                    <span class="article-category">البيئة</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="container pb-5">
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card p-4 h-100 border-orange shadow-sm">
+                <h6 class="fw-bold text-dark mb-4 border-bottom pb-2"><i class="bi bi-person-badge text-warning"></i> بيانات المرسل الرئيسي</h6>
+                <div class="mb-3">
+                    <label class="form-label">اسم المرسل</label>
+                    <input type="text" id="senderName" class="form-control" placeholder="ابحث أو ادخل اسم" list="pastSenders" oninput="autoFillSender()">
+                    <datalist id="pastSenders"></datalist>
                 </div>
-
-                <!-- أزرار التنقل -->
-                <div class="swiper-button-prev articles-button-prev">
-                    <i class="fas fa-chevron-right"></i>
+                <div class="mb-3">
+                    <label class="form-label">رقم الحساب</label>
+                    <input type="text" id="senderAccount" class="form-control" placeholder="00000000">
                 </div>
-                <div class="swiper-button-next articles-button-next">
-                    <i class="fas fa-chevron-left"></i>
+                <div>
+                    <label class="form-label">رقم الهاتف</label>
+                    <input type="text" id="senderPhone" class="form-control" placeholder="77xxxxxxx">
                 </div>
-
-                <!-- النقاط (Pagination) -->
-                <div class="swiper-pagination articles-pagination"></div>
-            </div>
-
-            <!-- زر عرض جميع المقالات -->
-            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
-                <a href="#" class="btn btn-view-all">عرض جميع المقالات</a>
             </div>
         </div>
-    </section>
-
-    <!-- Bootstrap 5.3 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
-    <!-- AOS JS -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    
-    <!-- Custom JavaScript -->
-    <script>
-        // ============================================
-// تهيئة AOS (Animate On Scroll)
-// ============================================
-AOS.init({
-    duration: 800,
-    easing: 'ease-in-out-quad',
-    once: false,
-    offset: 100
-});
-
-// ============================================
-// تهيئة Swiper (السلايدر)
-// ============================================
-const articlesSlider = new Swiper('.articles-slider', {
-    // نوع الحلقة
-    loop: true,
-    
-    // السرعة والتأثيرات
-    speed: 800,
-    effect: 'slide',
-    
-    // التنقل بالأزرار
-    navigation: {
-        nextEl: '.articles-button-next',
-        prevEl: '.articles-button-prev',
-    },
-    
-    // نقاط التنقل (Pagination)
-    pagination: {
-        el: '.articles-pagination',
-        clickable: true,
-        dynamicBullets: true,
-    },
-    
-    // الاستجابة للشاشات المختلفة
-    breakpoints: {
-        // شاشات صغيرة جداً (الهواتف)
-        320: {
-            slidesPerView: 1,
-            spaceBetween: 15,
-            centeredSlides: true,
-        },
-        // شاشات صغيرة (الهواتف الكبيرة)
-        576: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            centeredSlides: true,
-        },
-        // شاشات متوسطة (الأجهزة اللوحية)
-        768: {
-            slidesPerView: 2,
-            spaceBetween: 25,
-            centeredSlides: false,
-        },
-        // شاشات كبيرة (أجهزة الكمبيوتر)
-        1024: {
-            slidesPerView: 3,
-            spaceBetween: 30,
-            centeredSlides: false,
-        },
-        // شاشات كبيرة جداً
-        1440: {
-            slidesPerView: 3,
-            spaceBetween: 35,
-            centeredSlides: false,
-        },
-    },
-    
-    // التمرير التلقائي
-    autoplay: {
-        delay: 5000, // 5 ثوان
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-    },
-    
-    // التأثيرات الإضافية
-    grabCursor: true,
-    watchSlidesProgress: true,
-    
-    // معالج الأحداث
-    on: {
-        slideChange: function() {
-            // يمكن إضافة تأثيرات إضافية عند تغيير الشريحة
-            console.log('تم تغيير الشريحة إلى:', this.activeIndex);
-        },
-    }
-});
-
-// ============================================
-// تأثيرات إضافية عند تحميل الصفحة
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    // إضافة تأثير التحميل
-    const articleCards = document.querySelectorAll('.article-card');
-    
-    articleCards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-    });
-    
-    // إضافة تأثير عند الضغط على الأزرار
-    const buttons = document.querySelectorAll('.read-more-btn, .btn-view-all');
-    
-    buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // تأثير الموجة (Ripple effect)
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.classList.add('ripple');
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-    
-    // تأثير التمرير على الصفحة
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.scrollY;
-        const parallaxElements = document.querySelectorAll('.article-image');
         
-        parallaxElements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementHeight = element.offsetHeight;
-            
-            if (elementTop < window.innerHeight && elementTop + elementHeight > 0) {
-                const yPos = (scrollTop - element.offsetParent.offsetTop) * 0.5;
-                element.style.backgroundPosition = `center ${yPos}px`;
-            }
-        });
-    });
-});
-
-// ============================================
-// إضافة أنماط CSS للتأثيرات الديناميكية
-// ============================================
-const style = document.createElement('style');
-style.textContent = `
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.6);
-        transform: scale(0);
-        animation: ripple-animation 0.6s ease-out;
-        pointer-events: none;
-    }
-    
-    @keyframes ripple-animation {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-    
-    /* تأثير التركيز على الأزرار */
-    .read-more-btn:focus,
-    .btn-view-all:focus {
-        outline: 2px solid var(--accent-red);
-        outline-offset: 2px;
-    }
-    
-    /* تأثير التحميل */
-    @keyframes loadingPulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ============================================
-// معالج الأخطاء والتحقق من التوافقية
-// ============================================
-if (!window.Swiper) {
-    console.error('مكتبة Swiper لم يتم تحميلها بنجاح');
-}
-
-if (!window.AOS) {
-    console.error('مكتبة AOS لم يتم تحميلها بنجاح');
-}
-
-// ============================================
-// دالة مساعدة لإضافة مقالات جديدة ديناميكياً
-// ============================================
-function addNewArticle(articleData) {
-    const swiperWrapper = document.querySelector('.swiper-wrapper');
-    
-    const newSlide = document.createElement('div');
-    newSlide.className = 'swiper-slide';
-    newSlide.innerHTML = `
-        <div class="article-card">
-            <div class="article-image-wrapper">
-                <img src="${articleData.image}" alt="${articleData.title}" class="article-image">
-                <div class="article-overlay">
-                    <a href="${articleData.link}" class="read-more-btn">اقرأ المزيد</a>
+        <div class="col-lg-8">
+            <div class="card p-4 h-100 border-green shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-chat-left-text text-success"></i> لصق الرسالة النصية</h6>
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="resetForm()"><i class="bi bi-trash"></i> مسح الحقول</button>
                 </div>
-                <span class="article-date">${articleData.date}</span>
-            </div>
-            <div class="article-content">
-                <h3 class="article-title">${articleData.title}</h3>
-                <p class="article-excerpt">${articleData.excerpt}</p>
-                <div class="article-meta">
-                    <span class="article-category">${articleData.category}</span>
-                    <span class="article-author">${articleData.author}</span>
+                <textarea id="clientMessage" class="form-control mb-4 shadow-sm" rows="6" style="background: #fcfcfc;" placeholder="الصق رسائل الواتساب هنا..."></textarea>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <button class="btn btn-orange btn-lg w-100 shadow-sm" onclick="startAnalysis()">
+                            <i class="bi bi-magic me-2"></i> تحليل البيانات
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success btn-lg w-100 shadow-sm" onclick="copyTableToClipboard()">
+                            <i class="bi bi-clipboard-check"></i> نسخ
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-dark btn-lg w-100 shadow-sm" onclick="downloadExcel()">
+                            <i class="bi bi-file-earmark-excel"></i> اكسل
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    `;
-    
-    swiperWrapper.appendChild(newSlide);
-    articlesSlider.update();
-    AOS.refresh();
-}
+    </div>
 
-// ============================================
-// مثال على استخدام دالة إضافة مقالة جديدة
-// ============================================
-// addNewArticle({
-//     image: 'https://example.com/image.jpg',
-//     title: 'عنوان المقالة الجديدة',
-//     excerpt: 'وصف مختصر للمقالة',
-//     date: '13 فبراير 2026',
-//     category: 'الفئة',
-//     author: 'اسم الكاتب',
-//     link: '#'
-// });
+    <div id="statsRow" class="row g-3 mb-4" style="display: none;">
+        <div class="col-md-3 col-6"><div class="card p-3 text-center border-0 shadow-sm stats-card"><small class="text-muted">الإجمالي</small><h4 id="totalSumDisplay" style="color:var(--orange-main)">0</h4></div></div>
+        <div class="col-md-3 col-6"><div class="card p-3 text-center border-0 shadow-sm stats-card"><small class="text-muted">عدد الحوالات</small><h4 id="countDisplay">0</h4></div></div>
+    </div>
 
-// ============================================
-// تحسينات الأداء والتحسين
-// ============================================
-// تحميل الصور بشكل كسول (Lazy Loading)
-if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src || img.src;
-                img.classList.add('loaded');
-                observer.unobserve(img);
+    <div id="resultSection" style="display: none;">
+        <div class="click-to-copy-hint mb-3">
+<i class="bi bi-info-circle-fill me-2 text-primary"></i>
+تلميح: انقر على أي خلية لنسخ محتواها، أو استخدم أيقونة النسخ <i class="bi bi-copy"></i> في أعلى العمود لنسخ العمود بالكامل. لتعديل اسم المستلم، انقر على أيقونة القلم <i class="bi bi-pencil-square"></i> بجانب الاسم.     </div>
+        
+        <div class="card shadow-sm border-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center" id="mainTable">
+                    <thead>
+                        <tr>
+                            <th onclick="copyColumn(0)">اسم المرسل</th>
+                            <th onclick="copyColumn(1)">رقم الحساب</th>
+                            <th onclick="copyColumn(2)">هاتف المرسل</th>
+                            <th onclick="copyColumn(3)">المبلغ</th>
+                            <th onclick="copyColumn(4)" style="min-width:180px;">اسم المستلم</th>
+                            <th onclick="copyColumn(5)">هاتف المستلم</th>
+                            <th onclick="copyColumn(6)">ملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="bg-white"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="copyToast" class="copy-toast"></div>
+
+<script>
+    let processedRecords = [];
+    let ignoredSystemWords = [
+        "حول", "حولو", "الى", "إلى", "رقم", "مبلغ", "ريال", "حساب", "ارسل", "تحويل", 
+        "جوال", "و", "لـ", "صافي", "داخلية", "منها", "عبر", "باسم", "بإسم",
+        "السريع", "النجم", "الامتياز", "دادية", "الاكوع", "الحوشبي", "الشبكة", "اليمنية", "البرق"
+    ];
+
+    // تحميل المرسلين المحفوظين سابقا عند بدء التحميل
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSavedSenders();
+    });
+
+    function loadSavedSenders() {
+        const senders = JSON.parse(localStorage.getItem('savedSenders') || '{}');
+        const datalist = document.getElementById('pastSenders');
+        datalist.innerHTML = '';
+        
+        for (const name in senders) {
+            const option = document.createElement('option');
+            option.value = name;
+            datalist.appendChild(option);
+        }
+    }
+
+    function convertNumbers(str) {
+        const ar = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+        if (typeof str === 'string') { for (let i = 0; i < 10; i++) str = str.replace(ar[i], i); }
+        return str;
+    }
+
+    function resetForm() {
+        document.getElementById('clientMessage').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        document.getElementById('statsRow').style.display = 'none';
+        processedRecords = [];
+    }
+
+    function startAnalysis() {
+        let rawMsg = convertNumbers(document.getElementById('clientMessage').value);
+        if (!rawMsg.trim()) return;
+
+        let cleanedMsg = rawMsg.replace(/([\u0600-\u06FF])(7[01378]\d{7})/g, "$1 $2");
+        let formattedMsg = cleanedMsg.replace(/(77|73|71|70|78)(\d{7})/g, "\n$1$2\n");
+        formattedMsg = formattedMsg.replace(/[:\.\-\*]/g, ' '); 
+        formattedMsg = formattedMsg.replace(/(\d+)\s*(ألف|الف|آلاف|الاف)/g, "$1000");
+
+        document.getElementById('clientMessage').value = formattedMsg.trim();
+        const tokens = formattedMsg.replace(/\n/g, ' ').split(/\s+/).filter(t => t.trim() !== "");
+        analyzeData(tokens);
+    }
+
+    function analyzeData(tokens) {
+        const sName = document.getElementById('senderName').value.trim();
+        const sAcc = convertNumbers(document.getElementById('senderAccount').value.trim());
+        const sPh = convertNumbers(document.getElementById('senderPhone').value.trim());
+
+        // حفظ المرسل
+        if (sName) {
+            const senders = JSON.parse(localStorage.getItem('savedSenders') || '{}');
+            senders[sName] = { account: sAcc, phone: sPh };
+            localStorage.setItem('savedSenders', JSON.stringify(senders));
+            loadSavedSenders(); // تحديث قائمة المرسلين
+        }
+
+        processedRecords = [];
+        let curAmt = "", curPh = "", nameWords = [], isSameAsSender = false;
+
+        function saveRecord() {
+            if (curAmt || curPh || nameWords.length > 0) {
+                // منطق جديد: فصل الاسم عن الملاحظات
+                // إذا كان الاسم طويلاً جداً (أكثر من 5 كلمات)، نعتبر الباقي ملاحظات
+                let finalName = "";
+                let finalNotes = "";
+                
+                if (isSameAsSender) {
+                    finalName = sName;
+                } else {
+                    if (nameWords.length > 5) {
+                        finalName = nameWords.slice(0, 5).join(' ');
+                        finalNotes = nameWords.slice(5).join(' ');
+                    } else {
+                        finalName = nameWords.join(' ');
+                    }
+                }
+
+                processedRecords.push({
+                    sName, sAcc, sPh,
+                    amt: curAmt || "0",
+                    rName: finalName,
+                    rPh: isSameAsSender ? sPh : (curPh || "غير محدد"),
+                    notes: finalNotes, // حقل جديد للملاحظات
+                    isDone: false
+                });
+                curAmt = ""; curPh = ""; nameWords = []; isSameAsSender = false;
+            }
+        }
+
+        tokens.forEach((t) => {
+            let clean = t.replace(/[^\w\u0600-\u06FF]/g, '');
+            if (!clean) return;
+
+            if (["بأسمي", "باسمي", "بإسمي"].includes(clean)) { isSameAsSender = true; }
+
+            let isPhone = /^(77|73|71|70|78)\d{7}$/.test(clean);
+            let isAmount = /^\d{2,}$/.test(clean) && !isPhone;
+
+            if (isPhone) { curPh = clean; saveRecord(); } 
+            else if (isAmount) { curAmt = clean; } 
+            else if (!ignoredSystemWords.includes(clean)) {
+                // نجمع الكلمات هنا وسنقوم بفرزها في دالة saveRecord
+                nameWords.push(clean);
             }
         });
-    });
-    
-    document.querySelectorAll('.article-image').forEach(img => {
-        imageObserver.observe(img);
-    });
-}
+        saveRecord();
+        renderTable();
+    }
 
-    </script>
+    // --- وظيفة التعديل عند النقر المزدوج ---
+    function enableEdit(el, idx, field) {
+        // إنشاء حقل إدخال
+        const currentVal = processedRecords[idx][field];
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control form-control-sm';
+        input.value = currentVal;
+        input.id = `edit_${idx}_${field}`;
+        
+        // حفظ المحتوى الحالي للعنصر
+        const originalContent = el.innerHTML;
+        
+        // تفريغ العنصر ووضع حقل الإدخال
+        el.innerHTML = '';
+        el.appendChild(input);
+        
+        // تركيز على حقل الإدخال
+        input.focus();
+        
+        // حفظ عند فقدان التركيز
+        input.addEventListener('blur', function() {
+            saveEdit(idx, field, this.value, el, originalContent);
+        });
+        
+        // حفظ عند الضغط على Enter
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEdit(idx, field, this.value, el, originalContent);
+            }
+            // إلغاء عند الضغط على Escape
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                el.innerHTML = originalContent;
+            }
+        });
+    }
+
+    function saveEdit(idx, field, value, element, originalContent) {
+        // التحقق من قيمة فارغة
+        if (!value.trim() && field === 'rName') {
+            element.innerHTML = originalContent;
+            showToast("الاسم لا يمكن أن يكون فارغاً");
+            return;
+        }
+        
+        // حفظ القيمة الجديدة
+        processedRecords[idx][field] = value;
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = "";
+        let total = 0;
+
+        processedRecords.forEach((r, idx) => {
+            if(r.amt === "0" && r.rName === "") return;
+            total += parseFloat(r.amt) || 0;
+            const rowClass = r.isDone ? "row-completed" : "";
+            
+            tbody.innerHTML += `
+                <tr class="${rowClass}">
+                    <td class="text-muted small">${r.sName || '-'}</td>
+                    <td class="text-muted small copyable" onclick="copyValue('${r.sAcc}', this)">${r.sAcc || '-'}</td>
+                    <td class="text-muted small copyable" onclick="copyValue('${r.sPh}', this)">${r.sPh}</td>
+                    
+                    <td class="fw-bold text-success copyable" onclick="copyValue('${r.amt}', this)">
+                        ${parseFloat(r.amt).toLocaleString()}
+                    </td>
+                    
+                    <td class="recipient-cell">
+                        <div class="recipient-name">
+                            <span class="recipient-text copyable" onclick="copyValue('${r.rName}', this)">${r.rName || '<span class="text-danger small">غير محدد</span>'}</span>
+                            <i class="bi bi-pencil-square edit-icon" onclick="enableEdit(this.parentElement.parentElement, ${idx}, 'rName')" title="تعديل اسم المستلم"></i>
+                        </div>
+                    </td>
+                    
+                    <td class="copyable" onclick="copyValue('${r.rPh}', this)">${r.rPh}</td>
+                    
+                    <td class="notes-cell">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <span class="small me-1">${r.notes ? r.notes : ''}</span>
+                            <i class="bi bi-pencil-square edit-icon" onclick="enableEdit(this.parentElement.parentElement, ${idx}, 'notes')" title="إضافة/تعديل ملاحظة"></i>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="d-flex justify-content-center gap-1">
+                            <button class="btn btn-sm btn-outline-success border-1" onclick="markAsDone(${idx})"><i class="bi bi-check-lg"></i></button>
+                            <button class="btn btn-sm btn-outline-danger border-1" onclick="deleteRow(${idx})"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+        });
+
+        document.getElementById('totalSumDisplay').innerText = total.toLocaleString();
+        document.getElementById('countDisplay').innerText = document.getElementById('tableBody').rows.length;
+        document.getElementById('resultSection').style.display = 'block';
+        document.getElementById('statsRow').style.display = 'flex';
+    }
+
+    function markAsDone(idx) {
+        processedRecords[idx].isDone = !processedRecords[idx].isDone; // Toggle status
+        renderTable();
+    }
+
+    function deleteRow(idx) {
+        if(confirm("حذف السطر؟")) {
+            processedRecords.splice(idx, 1);
+            renderTable();
+        }
+    }
+
+    function copyValue(val, el) {
+        if(!val || val === "غير محدد") return;
+        
+        // تأثير بصري للنسخ
+        el.style.backgroundColor = "rgba(26, 149, 62, 0.1)";
+        setTimeout(() => {
+            el.style.backgroundColor = "";
+        }, 300);
+        
+        navigator.clipboard.writeText(val);
+        showToast("تم نسخ: " + val);
+    }
+
+    function copyColumn(colIdx) {
+        let rows = document.getElementById('tableBody').rows;
+        let data = [];
+        for (let i = 0; i < rows.length; i++) {
+            // التعامل مع اختلاف أنواع الخلايا (نص عادي أو input)
+            let cell = rows[i].cells[colIdx];
+            let text = "";
+            
+            // إذا كان الحقل هو اسم المستلم (العمود 4)
+            if (colIdx === 4) {
+                let recipientText = cell.querySelector('.recipient-text');
+                if (recipientText) {
+                    text = recipientText.textContent.trim();
+                }
+            } else {
+                text = cell.textContent.trim();
+            }
+            
+            if(text && text !== "غير محدد" && !text.includes("pencil-square")) data.push(text);
+        }
+        navigator.clipboard.writeText(data.join('\n'));
+        showToast("تم نسخ بيانات العمود");
+    }
+
+    function copyTableToClipboard() {
+        let text = "المرسل\tالحساب\tهاتف م\tالمبلغ\tالمستلم\tالهاتف\tملاحظات\n";
+        processedRecords.forEach(r => {
+            text += `${r.sName}\t${r.sAcc}\t${r.sPh}\t${r.amt}\t${r.rName}\t${r.rPh}\t${r.notes}\n`;
+        });
+        navigator.clipboard.writeText(text);
+        showToast("تم نسخ الجدول كاملاً");
+    }
+
+    function downloadExcel() {
+        let csv = "\uFEFFاسم المرسل,رقم الحساب,هاتف المرسل,المبلغ,اسم المستلم,هاتف المستلم,ملاحظات\n";
+        processedRecords.forEach(r => { 
+            csv += `${r.sName},${r.sAcc},${r.sPh},${r.amt},${r.rName},${r.rPh},${r.notes}\n`; 
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `كشف_حوالات_${new Date().toLocaleDateString()}.csv`;
+        link.click();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('copyToast');
+        t.innerText = msg; 
+        t.style.opacity = '1';
+        
+        // حذف أي مؤقتات سابقة لإخفاء التنبيه
+        clearTimeout(t.hideTimeout);
+        
+        // تعيين مؤقت جديد
+        t.hideTimeout = setTimeout(() => {
+            t.style.opacity = '0';
+        }, 2000);
+    }
+    
+    function autoFillSender() {
+        const name = document.getElementById('senderName').value;
+        const senders = JSON.parse(localStorage.getItem('savedSenders') || '{}');
+        if (senders[name]) {
+            document.getElementById('senderAccount').value = senders[name].account || '';
+            document.getElementById('senderPhone').value = senders[name].phone || '';
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
