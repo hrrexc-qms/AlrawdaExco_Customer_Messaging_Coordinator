@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>    المساعد الذكي لموظفي خدمة العملاء </title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -15,58 +10,86 @@
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --brand-orange: #faa619;
+            --brand-green: #1a953e;
+            --light-bg: #fdfcfb;
+        }
+
         body {
-            background-color: #f4f7f6;
+            background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
         }
         .container {
             background-color: #ffffff;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--brand-orange);
         }
         textarea {
             resize: vertical;
             min-height: 150px;
+            border-color: #eee;
+        }
+        textarea:focus {
+            border-color: var(--brand-orange) !important;
+            box-shadow: 0 0 0 0.25rem rgba(250, 166, 25, 0.25) !important;
         }
         th {
-            background-color: #0d6efd !important;
+            background-color: var(--brand-green) !important;
             color: white !important;
             text-align: center;
+            border-bottom: 3px solid var(--brand-orange) !important;
+            position: relative;
+        }
+        /* تنسيق زر نسخ العمود */
+        .copy-col-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.7em;
+            margin-right: 5px;
+            padding: 2px 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .copy-col-btn:hover {
+            background: var(--brand-orange);
         }
         td {
             vertical-align: middle;
             text-align: center;
         }
         .note-badge {
-            background-color: #ffc107;
-            color: #000;
-            padding: 4px 8px;
+            background-color: var(--brand-orange);
+            color: #fff;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.85em;
             display: inline-block;
             margin: 2px;
+            font-weight: 500;
         }
-        /* تنسيق الخلايا القابلة للتعديل والنسخ */
         .interactive-cell {
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
         }
         .interactive-cell:hover {
-            background-color: #e9ecef !important;
+            background-color: #fff9f0 !important;
+            color: var(--brand-orange);
         }
         .interactive-cell:focus {
             background-color: #fff3cd !important;
-            outline: 2px solid #ffc107;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            outline: 2px solid var(--brand-orange);
         }
-        /* إشعار النسخ */
         #toast {
             visibility: hidden;
             min-width: 200px;
-            background-color: #28a745;
+            background-color: var(--brand-green);
             color: #fff;
             text-align: center;
             border-radius: 5px;
@@ -76,8 +99,6 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 16px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             opacity: 0;
             transition: opacity 0.3s, visibility 0.3s;
         }
@@ -86,59 +107,100 @@
             opacity: 1;
         }
         .stats-card {
-            background-color: #e2f0d9;
-            border-left: 5px solid #28a745;
+            background-color: #f0f9f1;
+            border-left: 5px solid var(--brand-green);
             padding: 15px;
             border-radius: 8px;
         }
+        .sender-info-box {
+            background-color: #fffdf9;
+            border: 1px solid #ffeeba;
+            border-right: 5px solid var(--brand-orange);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .text-primary { color: var(--brand-orange) !important; }
+        .btn-primary { 
+            background-color: var(--brand-green) !important; 
+            border-color: var(--brand-green) !important; 
+        }
+        .btn-success { 
+            background-color: var(--brand-orange) !important; 
+            border-color: var(--brand-orange) !important; 
+            color: white !important;
+        }
     </style>
 </head>
-<body>
+<body onload="loadSavedData()">
 
 <div class="container">
-  <h2 class="fw-bold mb-1"><i class="bi bi-shield-fill-check me-2"></i> المساعد الذكي لخدمة العملاء  </h2>
+ <h2 class="fw-bold mb-1"><i class="bi bi-shield-fill-check me-2"></i> المساعد الذكي لخدمة العملاء  </h2>
         <p class="mb-0 opacity-90">نظام الفرز الآلي وتنسيق بيانات رسائل العملاء  </p>
-      
+          
+<div class="sender-info-box">
+    <h5 class="mb-3 fw-bold" style="color: var(--brand-orange)">بيانات المرسل الرئيسي </h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label fw-bold">اسم المرسل:</label>
+            <input type="text" id="mainSenderName" class="form-control" placeholder="أدخل اسم المرسل" list="namesList" oninput="autoFillSenderInfo()">
+            <datalist id="namesList"></datalist>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">رقم حساب المرسل:</label>
+<input type="text" id="mainSenderAccount" class="form-control" placeholder="أدخل رقم الحساب" 
+       oninput="this.value = normalizeNumbers(this.value)">            </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">هاتف المرسل:</label>
+<input type="text" id="mainSenderPhone" class="form-control" placeholder="أدخل رقم الهاتف" 
+       oninput="this.value = normalizeNumbers(this.value)">        </div>
+    </div>
+</div>
     <div class="mb-3">
         <label for="inputText" class="form-label fw-bold">قم بلصق رسالة العملاء هنا:</label>
-        <textarea class="form-control" id="inputText" placeholder="الصق النص هنا..."></textarea>
+        <textarea class="form-control shadow-sm" id="inputText" placeholder="الصق النص هنا..."></textarea>
     </div>
 
     <div class="d-flex gap-2 justify-content-center mb-4 flex-wrap">
-        <button class="btn btn-primary px-4" onclick="analyzeAndBuildTable()">تحليل وعرض في جدول</button>
-        <button class="btn btn-success px-4" onclick="formatText()">تنسيق النص كقائمة</button>
+                <button class="btn btn-success px-4 shadow-sm" onclick="formatText()">تنسيق النص كقائمة</button>
+
+        <button class="btn btn-primary px-4 shadow-sm" onclick="analyzeAndBuildTable()">تحليل وعرض في جدول</button>
         <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button>
-        <!-- <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="window.print()">🖨️ طباعة</button> -->
+        <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button>
     </div>
 
     <div id="dashboard" class="d-none mb-3">
         <div class="row align-items-center">
+           
             <div class="col-md-6 mb-2">
-                <div class="stats-card d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 text-success fw-bold">إجمالي المبالغ: <span id="totalAmount">0</span></h5>
+                <input type="text" id="searchInput" class="form-control form-control-lg border-success" placeholder="🔍 ابحث هنا..." onkeyup="filterTable()">
+            </div>
+             <div class="col-md-6 mb-2">
+                <div class="stats-card d-flex justify-content-between align-items-center shadow-sm">
+                    <h5 class="mb-0 fw-bold" style="color: var(--brand-green)">إجمالي المبالغ: <span id="totalAmount">0</span></h5>
                     <h6 class="mb-0 text-secondary">عدد الحوالات: <span id="totalCount">0</span></h6>
                 </div>
             </div>
-            <div class="col-md-6 mb-2">
-                <input type="text" id="searchInput" class="form-control form-control-lg" placeholder="🔍 ابحث بالاسم، الهاتف، أو المبلغ..." onkeyup="filterTable()">
-            </div>
         </div>
-        <p class="text-muted small mt-2 text-center">💡 تلميح: <strong>نقرة واحدة</strong> للنسخ | <strong>نقرتين</strong> لتعديل النص (المبلغ، الاسم، الهاتف)</p>
+        <p class="text-muted small mt-2 text-center">💡 تلميح: <strong>نقرة واحدة</strong> للنسخ | <strong>نقرتين</strong> للتعديل | زر 📋 لنسخ العمود</p>
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover d-none" id="resultTable">
             <thead>
                 <tr>
-                    <th>المبلغ</th>
-                    <th>الاسم كامل</th>
-                    <th>تلفون المستلم</th>
+                    <th>المرسل <button class="copy-col-btn" onclick="copyColumn(1)" title="نسخ العمود">📋</button></th>
+                    <th>رقم الحساب <button class="copy-col-btn" onclick="copyColumn(2)" title="نسخ العمود">📋</button></th>
+                    <th>هاتف م. <button class="copy-col-btn" onclick="copyColumn(3)" title="نسخ العمود">📋</button></th>
+                     <th>المبلغ <button class="copy-col-btn" onclick="copyColumn(0)" title="نسخ العمود">📋</button></th>
+
+                    <th>الاسم كامل <button class="copy-col-btn" onclick="copyColumn(4)" title="نسخ العمود">📋</button></th>
+                    <th>تلفون المستلم <button class="copy-col-btn" onclick="copyColumn(5)" title="نسخ العمود">📋</button></th>
                     <th>ملاحظات</th>
                     <th>إجراء</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
-                </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 </div>
@@ -146,6 +208,91 @@
 <div id="toast">✅ تم النسخ إلى الحافظة!</div>
 
 <script>
+    // --- وظائف الحفظ والاكمال التلقائي الذكي ---
+    
+    // دالة لحفظ الربط بين الاسم والحساب والهاتف (يتم استدعاؤها عند الضغط على تحليل)
+    function saveToSenderDatabase() {
+        const name = document.getElementById('mainSenderName').value.trim();
+        const account = document.getElementById('mainSenderAccount').value.trim();
+        const phone = document.getElementById('mainSenderPhone').value.trim();
+
+        if (!name || name === "-" || name === "") return;
+
+        let db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
+
+        // تخزين البيانات مربوطة بالاسم
+        db[name] = {
+            account: account.replace(' /', ''),
+            phone: phone
+        };
+
+        localStorage.setItem('senderDatabase', JSON.stringify(db));
+        updateDatalists();
+    }
+
+    // دالة التعبئة التلقائية: تعمل فقط عند الكتابة أو اختيار اسم
+    function autoFillSenderInfo() {
+        const nameInput = document.getElementById('mainSenderName').value;
+        const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
+        
+        // إذا كان الاسم المكتوب مطابقاً تماماً لاسم مخزن، يتم تعبئة الحقول
+        if (db[nameInput]) {
+            document.getElementById('mainSenderAccount').value = db[nameInput].account;
+            document.getElementById('mainSenderPhone').value = db[nameInput].phone;
+        } else {
+            // إذا مسح المستخدم الاسم، تظل الحقول الأخرى كما هي أو يمكنك جعلها تفرغ كالتالي:
+            // document.getElementById('mainSenderAccount').value = "";
+            // document.getElementById('mainSenderPhone').value = "";
+        }
+    }
+
+    // تحميل الاقتراحات فقط بدون ملء الحقول عند فتح الصفحة
+    function loadSavedData() {
+        updateDatalists();
+        // ملاحظة: تم حذف كود ملء الحقول من lastSender لتبقى فارغة كما طلبت
+    }
+
+    function updateDatalists() {
+        const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
+        const namesList = document.getElementById('namesList');
+        if (namesList) {
+            // نضع الأسماء فقط في قائمة الاقتراحات
+            namesList.innerHTML = Object.keys(db).map(n => `<option value="${n}">`).join('');
+        }
+    }
+
+    function clearHistory() {
+        if(confirm("هل تريد مسح سجل الأسماء والروابط المحفوظة؟")) {
+            localStorage.removeItem('senderDatabase');
+            updateDatalists();
+            // تفريغ الحقول يدوياً عند مسح السجل
+            document.getElementById('mainSenderName').value = "";
+            document.getElementById('mainSenderAccount').value = "";
+            document.getElementById('mainSenderPhone').value = "";
+            alert("تم مسح السجل بنجاح");
+        }
+    }
+
+    // --- وظيفة نسخ العمود ككل ---
+    function copyColumn(index) {
+        const rows = document.querySelectorAll("#tableBody tr");
+        let colData = [];
+        rows.forEach(row => {
+            if (row.style.display !== 'none') {
+                let cellText = row.cells[index].innerText.replace(' /', '').trim();
+                colData.push(cellText);
+            }
+        });
+        if (colData.length > 0) {
+            navigator.clipboard.writeText(colData.join('\n')).then(() => {
+                const toast = document.getElementById("toast");
+                toast.innerText = "✅ تم نسخ العمود بنجاح!";
+                showToast();
+            });
+        }
+    }
+
+    // --- الوظائف الأصلية للمعالجة ---
     function normalizeNumbers(text) {
         return text.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
     }
@@ -155,19 +302,14 @@
         let lines = text.split('\n');
         let records = [];
         let currentRecord = "";
-
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
             if (line === "") {
-                if (currentRecord !== "") {
-                    records.push(currentRecord);
-                    currentRecord = "";
-                }
+                if (currentRecord !== "") { records.push(currentRecord); currentRecord = ""; }
                 continue;
             }
             let hasPhone = /7\d{8}/.test(currentRecord);
             let lineHasPhone = /7\d{8}/.test(line);
-
             if (hasPhone && lineHasPhone) {
                 records.push(currentRecord);
                 currentRecord = line;
@@ -182,15 +324,9 @@
     function parseRecord(recordText) {
         let text = recordText.replace(/[\.\-\(\)]/g, ' ').replace(/\s+/g, ' ').trim();
         let phone = "", amount = "0", name = "", notes = [];
-
-        // 1. استخراج الهاتف
         let phoneMatch = text.match(/\b(7\d{8})\b/);
-        if (phoneMatch) {
-            phone = phoneMatch[1];
-            text = text.replace(phoneMatch[1], ' ');
-        }
+        if (phoneMatch) { phone = phoneMatch[1]; text = text.replace(phoneMatch[1], ' '); }
 
-        // 2. استخراج الملاحظات (إلى فلان)
         let transferRegex = /(?:\d+(?:[,،]\d+)?\s*(?:الف|ألف)?\s*)?(?:الى|إلى)\s*([^\s\d]+)/g;
         let tMatch;
         while ((tMatch = transferRegex.exec(text)) !== null) {
@@ -198,21 +334,16 @@
             text = text.replace(tMatch[0], ' ');
         }
 
-        // 3. استخراج المبلغ
         let amountMatch = text.match(/(?:حوله\s*)?(\d+(?:[,،]\d+)?)(?:\s*(الف|ألف))?/);
         if (amountMatch) {
             let numStr = amountMatch[1].replace(/[,،]/g, ''); 
             let num = parseFloat(numStr);
             let hasAlf = amountMatch[2] !== undefined || text.includes('الف') || text.includes('ألف');
-            
             if (hasAlf && num < 1000) num = num * 1000;
             amount = num.toString();
-            
-            if (amountMatch[0].includes("حوله")) notes.push("حوله");
             text = text.replace(amountMatch[0], ' ');
         }
 
-        // 4. استخراج الاسم وتصفيته
         let ignoreWords = ['الف', 'ألف', 'يمني', 'حوله', 'حول'];
         let words = text.split(/\s+/).filter(w => w);
         let nameWords = [];
@@ -223,21 +354,13 @@
                 notes.push(w);
             }
         });
-
-        return {
-            amount: amount || "0",
-            name: nameWords.join(' ') || "غير محدد",
-            phone: phone || "غير محدد",
-            notes: notes
-        };
+        return { amount: amount || "0", name: nameWords.join(' ') || "غير محدد", phone: phone || "غير محدد", notes: notes };
     }
 
-    // زر التنسيق كنص
     function formatText() {
         const textarea = document.getElementById('inputText');
         const rawText = textarea.value;
         if (!rawText.trim()) return;
-
         const records = splitIntoRecords(rawText);
         let formattedText = "";
         records.forEach(record => {
@@ -248,10 +371,17 @@
         textarea.value = formattedText;
     }
 
-    // زر التحليل وعرض الجدول
     function analyzeAndBuildTable() {
         const rawText = document.getElementById('inputText').value;
         if (!rawText.trim()) return;
+
+        const mainSender = document.getElementById('mainSenderName').value || "-";
+        const mainAcc = document.getElementById('mainSenderAccount').value;
+        const mainPhone = document.getElementById('mainSenderPhone').value || "-";
+        const formattedAcc = mainAcc ? mainAcc + " /" : "-";
+
+        // حفظ البيانات للربط الذكي في المرات القادمة
+        saveToSenderDatabase();
 
         const records = splitIntoRecords(rawText);
         const tbody = document.getElementById('tableBody');
@@ -264,11 +394,14 @@
                 : '<span class="text-muted">لا يوجد</span>';
 
             const row = `<tr>
-                <td class="interactive-cell fw-bold text-success amount-cell" title="نقرة للنسخ | نقرتين للتعديل">${data.amount}</td>
-                <td class="interactive-cell fw-bold name-cell" title="نقرة للنسخ | نقرتين للتعديل">${data.name}</td>
-                <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr" title="نقرة للنسخ | نقرتين للتعديل">${data.phone}</td>
+                <td class="interactive-cell">${mainSender}</td>
+                <td class="interactive-cell">${formattedAcc}</td>
+                <td class="interactive-cell text-secondary">${mainPhone}</td>
+                <td class="interactive-cell fw-bold text-success amount-cell">${data.amount}</td>
+                <td class="interactive-cell fw-bold name-cell">${data.name}</td>
+                <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr">${data.phone}</td>
                 <td>${notesHtml}</td>
-                <td><button class="btn btn-sm btn-danger" onclick="deleteRow(this)">🗑️</button></td>
+                <td><button class="btn btn-sm btn-outline-danger border-0" onclick="deleteRow(this)">🗑️</button></td>
             </tr>`;
             tbody.insertAdjacentHTML('beforeend', row);
         });
@@ -276,117 +409,98 @@
         document.getElementById('resultTable').classList.remove('d-none');
         document.getElementById('dashboard').classList.remove('d-none');
         document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('d-none'));
-        
         updateTotals();
     }
 
-    // إدارة أحداث (النسخ بنقرة) و (التعديل بنقرتين)
+    // إدارة أحداث الجدول
     const tableBody = document.getElementById('tableBody');
-
-    // نقرة واحدة للنسخ
     tableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
-            // إذا كانت الخلية في وضع التعديل، لا ننسخ
             if (e.target.getAttribute('contenteditable') === 'true') return;
-            
-            navigator.clipboard.writeText(e.target.innerText.trim()).then(() => {
+            let textToCopy = e.target.innerText.replace(' /', '').trim();
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                document.getElementById("toast").innerText = "✅ تم النسخ إلى الحافظة!";
                 showToast();
             });
         }
     });
 
-    // نقرتين للتعديل
     tableBody.addEventListener('dblclick', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
             e.target.setAttribute('contenteditable', 'true');
             e.target.focus();
-            // تحديد النص لتسهيل التعديل
             document.execCommand('selectAll', false, null);
         }
     });
 
-    // حفظ التعديلات عند النقر خارج الخلية أو ضغط Enter
     tableBody.addEventListener('focusout', saveEdit);
     tableBody.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            e.target.blur(); // سيؤدي هذا لاستدعاء focusout
-        }
+        if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
     });
 
     function saveEdit(e) {
         if (e.target.classList.contains('interactive-cell') && e.target.getAttribute('contenteditable') === 'true') {
             e.target.setAttribute('contenteditable', 'false');
-            updateTotals(); // تحديث المجاميع في حال تم تعديل مبلغ
+            updateTotals();
         }
     }
 
-    // إظهار إشعار النسخ
     function showToast() {
         const toast = document.getElementById("toast");
         toast.className = "show";
         setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
     }
 
-    // حذف صف
     function deleteRow(btn) {
-        btn.closest('tr').remove();
-        updateTotals();
+        if(confirm("هل أنت متأكد من الحذف؟")) {
+            btn.closest('tr').remove();
+            updateTotals();
+        }
     }
 
-    // تحديث إجمالي المبالغ وعدد الحوالات
     function updateTotals() {
-        let total = 0;
-        let count = 0;
+        let total = 0, count = 0;
         const amountCells = document.querySelectorAll('.amount-cell');
-        
         amountCells.forEach(cell => {
-            // تجاهل الصفوف المخفية (أثناء البحث)
             if (cell.closest('tr').style.display !== 'none') {
                 let val = parseFloat(cell.innerText.replace(/,/g, ''));
                 if (!isNaN(val)) total += val;
                 count++;
             }
         });
-
         document.getElementById('totalAmount').innerText = total.toLocaleString();
         document.getElementById('totalCount').innerText = count;
     }
 
-    // ميزة البحث في الجدول
     function filterTable() {
         const input = document.getElementById("searchInput").value.toLowerCase();
         const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-
         for (let i = 0; i < rows.length; i++) {
             let rowText = rows[i].innerText.toLowerCase();
             rows[i].style.display = rowText.includes(input) ? "" : "none";
         }
-        updateTotals(); // تحديث المجاميع بناءً على نتائج البحث
+        updateTotals();
     }
 
-    // تصدير الجدول إلى ملف Excel (CSV)
     function exportTableToCSV() {
-        let csv = '\uFEFF'; // لدعم اللغة العربية في إكسل
+        let csv = '\uFEFF'; 
         const rows = document.querySelectorAll("#resultTable tr");
-        
         for (let i = 0; i < rows.length; i++) {
-            let row = [], cols = rows[i].querySelectorAll("td, th");
-            
-            for (let j = 0; j < cols.length - 1; j++) { // تجاهل عمود "إجراء" (زر الحذف)
-                let data = cols[j].innerText.replace(/"/g, '""'); // تنظيف الفواصل
-                row.push('"' + data + '"');
+            if (rows[i].style.display === 'none') continue;
+            let rowData = [];
+            let cols = rows[i].querySelectorAll("td, th");
+            for (let j = 0; j < 6; j++) {
+                if (cols[j]) {
+                    let text = cols[j].innerText.replace('📋', '').replace(' /', '').trim();
+                    rowData.push('"' + text.replace(/"/g, '""') + '"');
+                }
             }
-            if (row.length > 0 && rows[i].style.display !== 'none') {
-                csv += row.join(",") + "\n";
-            }
+            csv += rowData.join(",") + "\n";
         }
-
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "الحوالات.csv");
+        link.setAttribute("href", URL.createObjectURL(blob));
+        link.setAttribute("download", "كشف_الحوالات_منظم.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
