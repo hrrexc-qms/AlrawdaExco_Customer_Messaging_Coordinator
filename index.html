@@ -89,6 +89,20 @@
             background-color: #fff3cd !important;
             outline: 2px solid var(--brand-orange);
         }
+        /* --- تنسيق الصف المشطوب (تم التحويل) --- */
+        .completed-row {
+            background-color: #f0f0f0 !important;
+            color: #999 !important;
+            text-decoration: line-through;
+        }
+        .completed-row .interactive-cell {
+            color: #999 !important; /* توحيد اللون للرمادي */
+        }
+        .completed-row .amount-cell {
+            color: #999 !important; /* إلغاء اللون الأخضر للمبلغ */
+            text-decoration: line-through;
+        }
+        
         #toast {
             visibility: hidden;
             min-width: 200px;
@@ -174,32 +188,33 @@
 
     <div id="dashboard" class="d-none mb-3">
         <div class="row align-items-center">
-           
+            
             <div class="col-md-6 mb-2">
                 <input type="text" id="searchInput" class="form-control form-control-lg border-success" placeholder="🔍 ابحث هنا..." onkeyup="filterTable()">
             </div>
              <div class="col-md-6 mb-2">
                 <div class="stats-card d-flex justify-content-between align-items-center shadow-sm">
-                    <h5 class="mb-0 fw-bold" style="color: var(--brand-green)">إجمالي المبالغ: <span id="totalAmount">0</span></h5>
+                    <h5 class="mb-0 fw-bold" style="color: var(--brand-green)">إجمالي المبالغ (القائمة): <span id="totalAmount">0</span></h5>
                     <h6 class="mb-0 text-secondary">عدد الحوالات: <span id="totalCount">0</span></h6>
                 </div>
             </div>
         </div>
-        <p class="text-muted small mt-2 text-center">💡 تلميح: <strong>نقرة واحدة</strong> للنسخ | <strong>نقرتين</strong> للتعديل | زر 📋 لنسخ العمود</p>
+        <p class="text-muted small mt-2 text-center">💡 تلميح: <strong>حدد المربع</strong> لشطب الحوالة وخصمها من الإجمالي | <strong>نقرة واحدة</strong> للنسخ</p>
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover d-none" id="resultTable">
             <thead>
                 <tr>
-                    <th>المرسل <button class="copy-col-btn" onclick="copyColumn(1)" title="نسخ العمود">📋</button></th>
-                    <th>رقم الحساب <button class="copy-col-btn" onclick="copyColumn(2)" title="نسخ العمود">📋</button></th>
-                    <th>هاتف م. <button class="copy-col-btn" onclick="copyColumn(3)" title="نسخ العمود">📋</button></th>
-                     <th>المبلغ <button class="copy-col-btn" onclick="copyColumn(0)" title="نسخ العمود">📋</button></th>
+                    <th>المرسل <button class="copy-col-btn" onclick="copyColumn(0)" title="نسخ العمود">📋</button></th>
+                    <th>رقم الحساب <button class="copy-col-btn" onclick="copyColumn(1)" title="نسخ العمود">📋</button></th>
+                    <th>هاتف م. <button class="copy-col-btn" onclick="copyColumn(2)" title="نسخ العمود">📋</button></th>
+                    <th>المبلغ <button class="copy-col-btn" onclick="copyColumn(3)" title="نسخ العمود">📋</button></th>
 
                     <th>الاسم كامل <button class="copy-col-btn" onclick="copyColumn(4)" title="نسخ العمود">📋</button></th>
                     <th>تلفون المستلم <button class="copy-col-btn" onclick="copyColumn(5)" title="نسخ العمود">📋</button></th>
                     <th>ملاحظات</th>
+                    <th>الحالة</th> 
                     <th>إجراء</th>
                 </tr>
             </thead>
@@ -233,33 +248,25 @@
         updateDatalists();
     }
 
-    // دالة التعبئة التلقائية: تعمل فقط عند الكتابة أو اختيار اسم
+    // دالة التعبئة التلقائية
     function autoFillSenderInfo() {
         const nameInput = document.getElementById('mainSenderName').value;
         const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
         
-        // إذا كان الاسم المكتوب مطابقاً تماماً لاسم مخزن، يتم تعبئة الحقول
         if (db[nameInput]) {
             document.getElementById('mainSenderAccount').value = db[nameInput].account;
             document.getElementById('mainSenderPhone').value = db[nameInput].phone;
-        } else {
-            // إذا مسح المستخدم الاسم، تظل الحقول الأخرى كما هي أو يمكنك جعلها تفرغ كالتالي:
-            // document.getElementById('mainSenderAccount').value = "";
-            // document.getElementById('mainSenderPhone').value = "";
         }
     }
 
-    // تحميل الاقتراحات فقط بدون ملء الحقول عند فتح الصفحة
     function loadSavedData() {
         updateDatalists();
-        // ملاحظة: تم حذف كود ملء الحقول من lastSender لتبقى فارغة كما طلبت
     }
 
     function updateDatalists() {
         const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
         const namesList = document.getElementById('namesList');
         if (namesList) {
-            // نضع الأسماء فقط في قائمة الاقتراحات
             namesList.innerHTML = Object.keys(db).map(n => `<option value="${n}">`).join('');
         }
     }
@@ -268,7 +275,6 @@
         if(confirm("هل تريد مسح سجل الأسماء والروابط المحفوظة؟")) {
             localStorage.removeItem('senderDatabase');
             updateDatalists();
-            // تفريغ الحقول يدوياً عند مسح السجل
             document.getElementById('mainSenderName').value = "";
             document.getElementById('mainSenderAccount').value = "";
             document.getElementById('mainSenderPhone').value = "";
@@ -276,7 +282,7 @@
         }
     }
 
-    // --- وظيفة نسخ العمود ككل ---
+    // --- وظيفة نسخ العمود ---
     function copyColumn(index) {
         const rows = document.querySelectorAll("#tableBody tr");
         let colData = [];
@@ -383,7 +389,6 @@
         const mainPhone = document.getElementById('mainSenderPhone').value || "-";
         const formattedAcc = mainAcc ? mainAcc + " /" : "-";
 
-        // حفظ البيانات للربط الذكي في المرات القادمة
         saveToSenderDatabase();
 
         const records = splitIntoRecords(rawText);
@@ -404,6 +409,9 @@
                 <td class="interactive-cell fw-bold name-cell">${data.name}</td>
                 <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr">${data.phone}</td>
                 <td>${notesHtml}</td>
+                <td class="text-center">
+                    <input type="checkbox" class="form-check-input" style="cursor:pointer; transform: scale(1.3);" onchange="toggleRowStatus(this)" title="حدد إذا تم التحويل">
+                </td>
                 <td><button class="btn btn-sm btn-outline-danger border-0" onclick="deleteRow(this)">🗑️</button></td>
             </tr>`;
             tbody.insertAdjacentHTML('beforeend', row);
@@ -415,11 +423,25 @@
         updateTotals();
     }
 
+    // --- وظيفة جديدة لتبديل حالة الصف عند النقر على المربع ---
+    function toggleRowStatus(checkbox) {
+        const row = checkbox.closest('tr');
+        if (checkbox.checked) {
+            row.classList.add('completed-row');
+        } else {
+            row.classList.remove('completed-row');
+        }
+        updateTotals(); // إعادة حساب الإجمالي بناءً على الحالة الجديدة
+    }
+
     // إدارة أحداث الجدول
     const tableBody = document.getElementById('tableBody');
     tableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
             if (e.target.getAttribute('contenteditable') === 'true') return;
+            // إذا كان الصف مشطوباً، لا تقم بالنسخ
+            if (e.target.closest('tr').classList.contains('completed-row')) return;
+            
             let textToCopy = e.target.innerText.replace(' /', '').trim();
             navigator.clipboard.writeText(textToCopy).then(() => {
                 document.getElementById("toast").innerText = "✅ تم النسخ إلى الحافظة!";
@@ -430,6 +452,9 @@
 
     tableBody.addEventListener('dblclick', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
+            // منع التعديل إذا كانت الحوالة مكتملة
+            if (e.target.closest('tr').classList.contains('completed-row')) return;
+            
             e.target.setAttribute('contenteditable', 'true');
             e.target.focus();
             document.execCommand('selectAll', false, null);
@@ -461,11 +486,14 @@
         }
     }
 
+    // --- تحديث الإجمالي ليحسب فقط الصفوف غير المشطوبة ---
     function updateTotals() {
         let total = 0, count = 0;
         const amountCells = document.querySelectorAll('.amount-cell');
         amountCells.forEach(cell => {
-            if (cell.closest('tr').style.display !== 'none') {
+            const row = cell.closest('tr');
+            // الشرط: الصف ظاهر + الصف ليس مكتمل (ليس مشطوباً)
+            if (row.style.display !== 'none' && !row.classList.contains('completed-row')) {
                 let val = parseFloat(cell.innerText.replace(/,/g, ''));
                 if (!isNaN(val)) total += val;
                 count++;
@@ -485,25 +513,40 @@
         updateTotals();
     }
 
+    // --- تعديل وظيفة التصدير لتشمل حالة الحوالة ---
     function exportTableToCSV() {
-        let csv = '\uFEFF'; 
-        const rows = document.querySelectorAll("#resultTable tr");
+        let csv = '\uFEFF'; // BOM for Excel Arabic support
+        
+        // إضافة عناوين الأعمدة في ملف الإكسل
+        csv += "المرسل,رقم الحساب,هاتف المرسل,المبلغ,الاسم كامل,تلفون المستلم,ملاحظات,الحالة\n";
+
+        const rows = document.querySelectorAll("#resultTable tbody tr");
         for (let i = 0; i < rows.length; i++) {
             if (rows[i].style.display === 'none') continue;
+            
             let rowData = [];
-            let cols = rows[i].querySelectorAll("td, th");
-            for (let j = 0; j < 6; j++) {
+            let cols = rows[i].querySelectorAll("td");
+            
+            // نأخذ الأعمدة من 0 إلى 6 (البيانات الأساسية)
+            for (let j = 0; j <= 6; j++) {
                 if (cols[j]) {
                     let text = cols[j].innerText.replace('📋', '').replace(' /', '').trim();
                     rowData.push('"' + text.replace(/"/g, '""') + '"');
                 }
             }
+            
+            // التحقق من حالة مربع الاختيار (العمود رقم 7 هو Checkbox)
+            const checkbox = cols[7].querySelector('input[type="checkbox"]');
+            const status = checkbox && checkbox.checked ? "تم التحويل" : "قيد الانتظار";
+            rowData.push('"' + status + '"');
+
             csv += rowData.join(",") + "\n";
         }
+        
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", "كشف_الحوالات_منظم.csv");
+        link.setAttribute("download", "كشف_الحوالات_مع_الحالة.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
