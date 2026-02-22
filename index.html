@@ -209,9 +209,9 @@ body {
                 <button class="btn btn-success px-4 shadow-sm" onclick="formatText()">تنسيق النص كقائمة</button>
 
         <button class="btn btn-primary px-4 shadow-sm" onclick="analyzeAndBuildTable()">تحليل وعرض في جدول</button>
-        <button class="btn btn-danger px-4 shadow-sm" onclick="resetPage()">🧹 مسح السجل</button>
+        <button class="btn btn-danger px-4 shadow-sm" onclick="resetPage()">🧹 مسح الكل</button>
         
-        <!-- <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button> -->
+        <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button>
         <!-- <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button> -->
     </div>
 
@@ -569,35 +569,78 @@ body {
             rows[i].style.display = rowText.includes(input) ? "" : "none";
         }
         updateTotals();
-    }
+    }function exportTableToCSV() {
+    // 1. إضافة الـ BOM لدعم اللغة العربية (UTF-8) لفتح الملف مباشرة في إكسل
+    let csv = '\uFEFF'; 
+    const separator = ';'; // الفاصلة المنقوطة لضمان توافق الأعمدة في النسخ العربية
+    
+    // عناوين الأعمدة
+    const headers = ["المرسل", "رقم الحساب", "هاتف المرسل", "المبلغ", "الاسم كامل", "تلفون المستلم", "ملاحظات", "الحالة"];
+    csv += headers.join(separator) + "\n";
 
-    function exportTableToCSV() {
-        let csv = '\uFEFF'; 
-        csv += "المرسل,رقم الحساب,هاتف المرسل,المبلغ,الاسم كامل,تلفون المستلم,ملاحظات,الحالة\n";
-        const rows = document.querySelectorAll("#resultTable tbody tr");
-        for (let i = 0; i < rows.length; i++) {
-            if (rows[i].style.display === 'none') continue;
-            let rowData = [];
-            let cols = rows[i].querySelectorAll("td");
-            for (let j = 0; j <= 6; j++) {
-                if (cols[j]) {
-                    let text = cols[j].innerText.replace('📋', '').replace(' /', '').trim();
-                    rowData.push('"' + text.replace(/"/g, '""') + '"');
-                }
-            }
-            const checkbox = cols[7].querySelector('input[type="checkbox"]');
-            const status = checkbox && checkbox.checked ? "تم التحويل" : "قيد الانتظار";
-            rowData.push('"' + status + '"');
-            csv += rowData.join(",") + "\n";
+    const rows = document.querySelectorAll("#resultTable tbody tr");
+    
+    // متغيرات لتخزين بيانات أول صف لاستخدامها في اسم الملف
+    let fileNameSenderName = "كشف";
+    let fileNameSenderAccount = "";
+    let foundFirstRow = false;
+
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].style.display === 'none') continue; // تخطي الصفوف المخفية نتيجة البحث
+        
+        let rowData = [];
+        let cols = rows[i].querySelectorAll("td");
+        
+        // استخراج بيانات الملف من أول صف ظاهر (اسم المرسل ورقم حسابه)
+        if (!foundFirstRow) {
+            fileNameSenderName = cols[0].innerText.trim();
+            fileNameSenderAccount = cols[1].innerText.replace(/\//g, '').trim(); // تنظيف رقم الحساب لاسم الملف
+            foundFirstRow = true;
         }
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", "كشف_الحوالات_مع_الحالة.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+
+        // معالجة بيانات الأعمدة
+        for (let j = 0; j <= 6; j++) {
+            if (cols[j]) {
+                let text = cols[j].innerText.replace('📋', '').trim();
+                
+                // تنسيق رقم الحساب (العمود رقم 1)
+                if (j === 1) { 
+                    // أولاً: حذف أي علامات مائلة موجودة مسبقاً لمنع التكرار //
+                    let cleanAcc = text.replace(/\//g, '').trim();
+                    // ثانياً: إضافة علامة مائلة واحدة فقط على اليسار
+                    text = "/ " + cleanAcc; 
+                }
+                
+                // تنظيف النص من علامات الاقتباس وتجهيزه للخلايا
+                rowData.push('"' + text.replace(/"/g, '""') + '"');
+            }
+        }
+        
+        // إضافة الحالة (تم التحويل / قيد الانتظار)
+        const checkbox = cols[7].querySelector('input[type="checkbox"]');
+        const status = checkbox && checkbox.checked ? "تم التحويل" : "قيد الانتظار";
+        rowData.push('"' + status + '"');
+
+        csv += rowData.join(separator) + "\n";
     }
+    
+    // إعداد اسم الملف: (اسم المرسل - رقم الحساب - التاريخ)
+    const today = new Date();
+    const dateStr = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    
+    // تنظيف اسم الملف من أي رموز قد تمنع الحفظ
+    const safeSenderName = fileNameSenderName.replace(/[\\/:*?"<>|]/g, '');
+    const finalFileName = `${safeSenderName} - ${fileNameSenderAccount} - ${dateStr}.csv`;
+
+    // إنشاء وتحميل الملف
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", finalFileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 </script>
 </body>
 </html>
