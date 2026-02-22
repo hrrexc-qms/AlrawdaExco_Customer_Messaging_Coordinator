@@ -147,6 +147,33 @@
             border-color: var(--brand-orange) !important; 
             color: white !important;
         }
+    /* تنسيق الفوتر الثابت */
+.footer-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+    border-top: 2px solid var(--brand-orange);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 999;
+}
+.brand-footer {
+    color: var(--brand-green);
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.dev-footer {
+    color: var(--brand-orange);
+    font-size: 0.8em;
+    margin-top: 2px;
+}
+/* إضافة هامش سفلي للحاوية الرئيسية لضمان عدم تغطية المحتوى بالفوتر */
+body {
+    padding-bottom: 70px; 
+}
     </style>
 </head>
 <body onload="loadSavedData()">
@@ -182,8 +209,10 @@
                 <button class="btn btn-success px-4 shadow-sm" onclick="formatText()">تنسيق النص كقائمة</button>
 
         <button class="btn btn-primary px-4 shadow-sm" onclick="analyzeAndBuildTable()">تحليل وعرض في جدول</button>
-        <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button>
-        <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button>
+        <button class="btn btn-danger px-4 shadow-sm" onclick="resetPage()">🧹 مسح الكل</button>
+        
+        <!-- <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button> -->
+        <!-- <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button> -->
     </div>
 
     <div id="dashboard" class="d-none mb-3">
@@ -222,7 +251,16 @@
         </table>
     </div>
 </div>
-
+<footer>
+    <div class="footer-container">
+    <div class="brand-footer">
+       شركة الروضة للصرافة والتحويلات المالية -2026 © 
+    </div>
+    <div class="dev-footer">
+        تصميم وتطوير: محمد أحمد الشرفي
+    </div>
+</div>
+</footer>
 <div id="toast">✅ تم النسخ إلى الحافظة!</div>
 
 <script>
@@ -279,6 +317,32 @@
             document.getElementById('mainSenderAccount').value = "";
             document.getElementById('mainSenderPhone').value = "";
             alert("تم مسح السجل بنجاح");
+        }
+    }
+
+    // --- وظيفة مسح الصفحة بالكامل ---
+    function resetPage() {
+        if(confirm("هل أنت متأكد من مسح جميع البيانات الحالية للبدء من جديد؟")) {
+            // مسح حقول الإدخال
+            document.getElementById('inputText').value = "";
+            document.getElementById('mainSenderName').value = "";
+            document.getElementById('mainSenderAccount').value = "";
+            document.getElementById('mainSenderPhone').value = "";
+            
+            // مسح محتوى الجدول
+            document.getElementById('tableBody').innerHTML = "";
+            
+            // إخفاء الجدول والأدوات
+            document.getElementById('resultTable').classList.add('d-none');
+            document.getElementById('dashboard').classList.add('d-none');
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.add('d-none'));
+            
+            // إعادة ضبط العدادات
+            updateTotals();
+            
+            // رسالة تنبيه
+            document.getElementById("toast").innerText = "🧹 تم مسح كافة البيانات";
+            showToast();
         }
     }
 
@@ -423,7 +487,6 @@
         updateTotals();
     }
 
-    // --- وظيفة جديدة لتبديل حالة الصف عند النقر على المربع ---
     function toggleRowStatus(checkbox) {
         const row = checkbox.closest('tr');
         if (checkbox.checked) {
@@ -431,15 +494,13 @@
         } else {
             row.classList.remove('completed-row');
         }
-        updateTotals(); // إعادة حساب الإجمالي بناءً على الحالة الجديدة
+        updateTotals();
     }
 
-    // إدارة أحداث الجدول
     const tableBody = document.getElementById('tableBody');
     tableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
             if (e.target.getAttribute('contenteditable') === 'true') return;
-            // إذا كان الصف مشطوباً، لا تقم بالنسخ
             if (e.target.closest('tr').classList.contains('completed-row')) return;
             
             let textToCopy = e.target.innerText.replace(' /', '').trim();
@@ -452,7 +513,6 @@
 
     tableBody.addEventListener('dblclick', function(e) {
         if (e.target.classList.contains('interactive-cell')) {
-            // منع التعديل إذا كانت الحوالة مكتملة
             if (e.target.closest('tr').classList.contains('completed-row')) return;
             
             e.target.setAttribute('contenteditable', 'true');
@@ -486,13 +546,11 @@
         }
     }
 
-    // --- تحديث الإجمالي ليحسب فقط الصفوف غير المشطوبة ---
     function updateTotals() {
         let total = 0, count = 0;
         const amountCells = document.querySelectorAll('.amount-cell');
         amountCells.forEach(cell => {
             const row = cell.closest('tr');
-            // الشرط: الصف ظاهر + الصف ليس مكتمل (ليس مشطوباً)
             if (row.style.display !== 'none' && !row.classList.contains('completed-row')) {
                 let val = parseFloat(cell.innerText.replace(/,/g, ''));
                 if (!isNaN(val)) total += val;
@@ -513,36 +571,25 @@
         updateTotals();
     }
 
-    // --- تعديل وظيفة التصدير لتشمل حالة الحوالة ---
     function exportTableToCSV() {
-        let csv = '\uFEFF'; // BOM for Excel Arabic support
-        
-        // إضافة عناوين الأعمدة في ملف الإكسل
+        let csv = '\uFEFF'; 
         csv += "المرسل,رقم الحساب,هاتف المرسل,المبلغ,الاسم كامل,تلفون المستلم,ملاحظات,الحالة\n";
-
         const rows = document.querySelectorAll("#resultTable tbody tr");
         for (let i = 0; i < rows.length; i++) {
             if (rows[i].style.display === 'none') continue;
-            
             let rowData = [];
             let cols = rows[i].querySelectorAll("td");
-            
-            // نأخذ الأعمدة من 0 إلى 6 (البيانات الأساسية)
             for (let j = 0; j <= 6; j++) {
                 if (cols[j]) {
                     let text = cols[j].innerText.replace('📋', '').replace(' /', '').trim();
                     rowData.push('"' + text.replace(/"/g, '""') + '"');
                 }
             }
-            
-            // التحقق من حالة مربع الاختيار (العمود رقم 7 هو Checkbox)
             const checkbox = cols[7].querySelector('input[type="checkbox"]');
             const status = checkbox && checkbox.checked ? "تم التحويل" : "قيد الانتظار";
             rowData.push('"' + status + '"');
-
             csv += rowData.join(",") + "\n";
         }
-        
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
