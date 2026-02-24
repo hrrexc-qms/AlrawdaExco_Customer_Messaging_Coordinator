@@ -215,7 +215,8 @@ body {
         <button class="btn btn-danger px-4 shadow-sm" onclick="resetPage()">🧹 مسح الكل</button>
         
         <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button>
-        <!-- <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button> -->
+        
+        <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button> 
     </div>
 
     <div id="dashboard" class="d-none mb-3">
@@ -267,6 +268,20 @@ body {
 <div id="toast">✅ تم النسخ إلى الحافظة!</div>
 
 <script>
+    // 🛡️ [تعديل أمني] دالة لتنظيف النصوص ومنع ثغرة (XSS) عند لصق الأكواد الخبيثة
+    function escapeHTML(str) {
+        if (!str) return "";
+        return str.toString().replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
     // --- وظائف الحفظ والاكمال التلقائي الذكي ---
     
     // دالة لحفظ الربط بين الاسم والحساب والهاتف (يتم استدعاؤها عند الضغط على تحليل)
@@ -308,7 +323,7 @@ body {
         const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
         const namesList = document.getElementById('namesList');
         if (namesList) {
-            namesList.innerHTML = Object.keys(db).map(n => `<option value="${n}">`).join('');
+            namesList.innerHTML = Object.keys(db).map(n => `<option value="${escapeHTML(n)}">`).join('');
         }
     }
 
@@ -468,17 +483,20 @@ document.getElementById('analyzeBtn').classList.remove('d-none');
 
         records.forEach(record => {
             const data = parseRecord(record);
+            
+            // 🛡️ [تعديل أمني] تنظيف الملاحظات لمنع ثغرة XSS
             let notesHtml = data.notes.length > 0 
-                ? data.notes.map(n => `<span class="note-badge">${n}</span>`).join('') 
+                ? data.notes.map(n => `<span class="note-badge">${escapeHTML(n)}</span>`).join('') 
                 : '<span class="text-muted">لا يوجد</span>';
 
+            // 🛡️ [تعديل أمني] تنظيف المتغيرات داخل الجدول لمنع ثغرة XSS
             const row = `<tr>
-                <td class="interactive-cell">${mainSender}</td>
-                <td class="interactive-cell">${formattedAcc}</td>
-                <td class="interactive-cell text-secondary">${mainPhone}</td>
-                <td class="interactive-cell fw-bold text-success amount-cell">${data.amount}</td>
-                <td class="interactive-cell fw-bold name-cell">${data.name}</td>
-                <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr">${data.phone}</td>
+                <td class="interactive-cell">${escapeHTML(mainSender)}</td>
+                <td class="interactive-cell">${escapeHTML(formattedAcc)}</td>
+                <td class="interactive-cell text-secondary">${escapeHTML(mainPhone)}</td>
+                <td class="interactive-cell fw-bold text-success amount-cell">${escapeHTML(data.amount)}</td>
+                <td class="interactive-cell fw-bold name-cell">${escapeHTML(data.name)}</td>
+                <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr">${escapeHTML(data.phone)}</td>
                 <td>${notesHtml}</td>
                 <td class="text-center">
                     <input type="checkbox" class="form-check-input" style="cursor:pointer; transform: scale(1.3);" onchange="toggleRowStatus(this)" title="حدد إذا تم التحويل">
@@ -576,7 +594,9 @@ document.getElementById('analyzeBtn').classList.remove('d-none');
             rows[i].style.display = rowText.includes(input) ? "" : "none";
         }
         updateTotals();
-    }function exportTableToCSV() {
+    }
+    
+    function exportTableToCSV() {
     // 1. إضافة الـ BOM لدعم اللغة العربية (UTF-8) لفتح الملف مباشرة في إكسل
     let csv = '\uFEFF'; 
     const separator = ';'; // الفاصلة المنقوطة لضمان توافق الأعمدة في النسخ العربية
@@ -609,6 +629,12 @@ document.getElementById('analyzeBtn').classList.remove('d-none');
         for (let j = 0; j <= 6; j++) {
             if (cols[j]) {
                 let text = cols[j].innerText.replace('📋', '').trim();
+                
+                // 🛡️ [تعديل أمني] منع ثغرة حقن ملفات الإكسل (CSV Injection)
+                // إذا كان النص يبدأ بعلامات مثل = أو + نقوم بإضافة علامة اقتباس مفردة ليقرأه الإكسل كنص
+                if (/^[=+\-@]/.test(text)) {
+                    text = "'" + text;
+                }
                 
                 // تنسيق رقم الحساب (العمود رقم 1)
                 if (j === 1) { 
