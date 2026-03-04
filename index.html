@@ -437,7 +437,7 @@ document.getElementById('analyzeBtn').classList.add('d-none');
             text = text.replace(amountMatch[0], ' ');
         }
 
-        let ignoreWords = ['الف', 'ألف', 'يمني', 'حوله', 'حول'];
+        let ignoreWords = ['الف', 'ألف', 'يمني', 'حوله', 'حول','حواله','حوالة'];
         let words = text.split(/\s+/).filter(w => w);
         let nameWords = [];
         words.forEach(w => {
