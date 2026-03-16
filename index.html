@@ -1,679 +1,397 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>    المساعد الذكي لموظفي خدمة العملاء </title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         :root {
+            --danger-bg: #ffdce0;
+            --warning-bg: #fff4e5;
             --brand-orange: #faa619;
-            --brand-green: #1a953e;
-            --light-bg: #fdfcfb;
+        --brand-green: #1a953e;
+        --brand-orange-hover: #d98c16;
         }
+/* تغيير لون شريط التنقل */
+    .navbar.bg-dark {
+        background-color: #212529 !important;
+        border-bottom: 3px solid var(--brand-orange);
+    }
 
+    /* تخصيص الأزرار بالألوان الجديدة */
+    .btn-primary {
+        background-color: var(--brand-orange) !important;
+        border-color: var(--brand-orange) !important;
+        color: #fff !important;
+    }
+    .btn-primary:hover {
+        background-color: var(--brand-orange-hover) !important;
+    }
+
+    .btn-success {
+        background-color: var(--brand-green) !important;
+        border-color: var(--brand-green) !important;
+    }
+
+    /* لمسة جمالية للنصوص والأيقونات */
+    .text-success { color: var(--brand-green) !important; }
+    
+    /* تنسيق ملاحظة التعديل */
+    .edit-tip {
+        background-color: #fff9f0;
+        border-right: 4px solid var(--brand-orange);
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        color:black;
+        display: inline-block;
+        width: 100%;
+    }
         body {
             background-color: #f8f9fa;
-            font-family: 'Cairo', sans-serif; 
-        font-size: 12px; 
-        color:black;  
-        margin: 0;
-        padding: 0;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            color: black;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .container {
-            background-color: #ffffff;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border-top: 8px solid var(--brand-orange);
+
+        .content-wrapper {
+            flex: 1;
         }
-        textarea {
-            resize: vertical;
-            min-height: 150px;
-            border-color: #eee;
-        }
-        textarea:focus {
-            border-color: var(--brand-orange) !important;
-            box-shadow: 0 0 0 0.25rem rgba(250, 166, 25, 0.25) !important;
-        }
-        th {
-            background-color: var(--brand-green) !important;
-            color: white !important;
-            text-align: center;
-            border-bottom: 3px solid var(--brand-orange) !important;
-            position: relative;
-        }
-        /* تنسيق زر نسخ العمود */
-        .copy-col-btn {
-            background: rgba(255,255,255,0.2);
+
+        .dashboard-card {
             border: none;
-            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+
+        .editable {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .editable:hover {
+            background-color: #e9ecef;
+        }
+
+        .invalid-data {
+            background-color: #ff3b30 !important;
+            color: #ffffff !important;
+            font-weight: bold;
+            border: 1px solid #c30000 !important;
+        }
+
+        .invalid-data span,
+        .invalid-data i {
+            color: #ffffff !important;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .edit-input {
+            width: 100%;
+            border: 1px solid #0d6efd;
             border-radius: 4px;
-            font-size: 0.7em;
-            margin-right: 5px;
-            padding: 2px 5px;
-            cursor: pointer;
-            transition: 0.3s;
+            padding: 2px;
         }
-        .copy-col-btn:hover {
-            background: var(--brand-orange);
+
+        /* تنسيق الفوتر */
+        footer {
+            background-color: #ffffff;
+            border-top: 1px solid #dee2e6;
+            padding: 20px 0;
+            margin-top: 50px;
+            color: #6c757d;
         }
-        td {
-            vertical-align: middle;
-            text-align: center;
+
+        [data-bs-theme="dark"] {
+            background-color: #121212;
+            color: #eee;
         }
-        .note-badge {
-            background-color: var(--brand-orange);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            display: inline-block;
-            margin: 2px;
-            font-weight: 500;
+
+        [data-bs-theme="dark"] .dashboard-card,
+        [data-bs-theme="dark"] footer {
+            background: #1e1e1e;
+            color: #aaa;
+            border-top-color: #333;
         }
-        .interactive-cell {
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .interactive-cell:hover {
-            background-color: #fff9f0 !important;
-            color: var(--brand-orange);
-        }
-        .interactive-cell:focus {
-            background-color: #fff3cd !important;
-            outline: 2px solid var(--brand-orange);
-        }
-        /* --- تنسيق الصف المشطوب (تم التحويل) --- */
-        .completed-row {
-            background-color: #f0f0f0 !important;
-            color: #999 !important;
-            text-decoration: line-through;
-        }
-        .completed-row .interactive-cell {
-            color: #999 !important; /* توحيد اللون للرمادي */
-        }
-        .completed-row .amount-cell {
-            color: #999 !important; /* إلغاء اللون الأخضر للمبلغ */
-            text-decoration: line-through;
-        }
-        
-        #toast {
-            visibility: hidden;
-            min-width: 200px;
-            background-color: var(--brand-green);
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 12px;
-            position: fixed;
-            z-index: 1000;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-        }
-        .stats-card {
-            background-color: #f0f9f1;
-            border-left: 5px solid var(--brand-green);
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .sender-info-box {
-            background-color: #fffdf9;
-            border: 1px solid #ffeeba;
-            border-right: 5px solid var(--brand-orange);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .text-primary { color: var(--brand-orange) !important; }
-        .btn-primary { 
-            background-color: var(--brand-green) !important; 
-            border-color: var(--brand-green) !important; 
-        }
-        .btn-success { 
-            background-color: var(--brand-orange) !important; 
-            border-color: var(--brand-orange) !important; 
-            color: white !important;
-        }
-    /* تنسيق الفوتر الثابت */
-.footer-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 10px 0;
-    text-align: center;
-    border-top: 2px solid var(--brand-orange);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    z-index: 999;
-}
-.brand-footer {
-    color: var(--brand-green);
-    font-weight: bold;
-    font-size: 0.9em;
-}
-.dev-footer {
-    color: var(--brand-orange);
-    font-size: 0.8em;
-    margin-top: 2px;
-}
-/* إضافة هامش سفلي للحاوية الرئيسية لضمان عدم تغطية المحتوى بالفوتر */
-body {
-    padding-bottom: 70px; 
-}
-#analyzeBtn {
-    transition: all 0.5s ease-in-out;
-}
     </style>
 </head>
-<body onload="loadSavedData()">
 
-<div class="container">
- <h2 class="fw-bold mb-1"><i class="bi bi-shield-fill-check me-2"></i> المساعد الذكي لخدمة العملاء  </h2>
-        <p class="mb-0 opacity-90">نظام الفرز الآلي وتنسيق بيانات رسائل العملاء  </p>
-          
-<div class="sender-info-box">
-    <h5 class="mb-3 fw-bold" style="color: var(--brand-orange)">بيانات المرسل الرئيسي </h5>
-    <div class="row g-3">
-        <div class="col-md-4">
-            <label class="form-label fw-bold">اسم المرسل:</label>
-            <input type="text" id="mainSenderName" class="form-control" placeholder="أدخل اسم المرسل" list="namesList" oninput="autoFillSenderInfo()">
-            <datalist id="namesList"></datalist>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label fw-bold">رقم حساب المرسل:</label>
-<input type="text" id="mainSenderAccount" class="form-control" placeholder="أدخل رقم الحساب" 
-       oninput="this.value = normalizeNumbers(this.value)">            </div>
-        <div class="col-md-4">
-            <label class="form-label fw-bold">هاتف المرسل:</label>
-<input type="text" id="mainSenderPhone" class="form-control" placeholder="أدخل رقم الهاتف" 
-       oninput="this.value = normalizeNumbers(this.value)">        </div>
-    </div>
-</div>
-    <div class="mb-3">
-        <label for="inputText" class="form-label fw-bold">قم بلصق رسالة العملاء هنا:</label>
-        <textarea class="form-control shadow-sm" id="inputText" placeholder="الصق النص هنا..."></textarea>
-    </div>
+<body data-bs-theme="light">
 
-    <div class="d-flex gap-2 justify-content-center mb-4 flex-wrap">
-                <button class="btn btn-success px-4 shadow-sm" onclick="formatText()">تنسيق النص كقائمة</button>
-
-        <button id="analyzeBtn" class="btn btn-primary px-4 shadow-sm d-none" onclick="analyzeAndBuildTable()">تحليل وعرض في جدول</button>
-        <button class="btn btn-danger px-4 shadow-sm" onclick="resetPage()">🧹 مسح الكل</button>
-        
-        <button class="btn btn-outline-dark px-3 d-none tool-btn" onclick="exportTableToCSV()">📥 تصدير إكسل</button>
-        
-        <button class="btn btn-outline-secondary px-3 d-none tool-btn" onclick="clearHistory()">🧹 مسح السجل</button> 
-    </div>
-
-    <div id="dashboard" class="d-none mb-3">
-        <div class="row align-items-center">
-            
-            <div class="col-md-6 mb-2">
-                <input type="text" id="searchInput" class="form-control form-control-lg border-success" placeholder="🔍 ابحث هنا..." onkeyup="filterTable()">
+    <div class="content-wrapper">
+        <nav class="navbar navbar-dark bg-dark shadow mb-4">
+            <div class="container">
+  <span class="navbar-brand fw-bold"><i class="fas fa-shield-alt text-success me-2"></i>   المساعد الذكي لموظفي خدمة العملاء 
+                 </span>                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info btn-sm" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="wipeAllData()"><i class="fas fa-user-slash"></i> مسح آمن</button>
+                </div>
             </div>
-             <div class="col-md-6 mb-2">
-                <div class="stats-card d-flex justify-content-between align-items-center shadow-sm">
-                    <h5 class="mb-0 fw-bold" style="color: var(--brand-green)">إجمالي المبالغ (القائمة): <span id="totalAmount">0</span></h5>
-                    <h6 class="mb-0 text-secondary">عدد الحوالات: <span id="totalCount">0</span></h6>
+        </nav>
+
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="card dashboard-card p-4">
+                        <label class="fw-bold mb-2"><i class="fas fa-database me-1"></i> الصق بيانات الحوالات هنا:</label>
+                        <textarea id="rawInput" class="form-control mb-3" rows="6"                        placeholder="قم بـ لصق الرسالة الخام المراد تحليل وفرز محتواها"></textarea>
+
+                        <div class="d-flex gap-2 flex-wrap">
+    <button class="btn btn-primary px-4 fw-bold" onclick="analyzeData()">
+        <i class="fas fa-magic me-2"></i> تحليل وفرز
+    </button>
+    <button class="btn btn-success px-4 d-none" id="exportExcel" onclick="exportToExcel()">
+        <i class="fas fa-file-excel me-2"></i> تصدير Excel
+    </button>
+    <button class="btn btn-outline-secondary btn-sm" onclick="copyColumn('name')">نسخ الأسماء</button>
+    <button class="btn btn-outline-secondary btn-sm" onclick="copyColumn('amount')">نسخ المبالغ</button>
+    <button class="btn btn-outline-secondary btn-sm" onclick="copyColumn('phone')">نسخ الهواتف</button>
+</div>
+                    </div>
+                </div>
+
+                <div id="statsArea" class="col-12 d-none">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card p-3 shadow-sm border-0 text-center">
+                                <h6>العدد</h6>
+                                <h3 id="statCount">0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card p-3 shadow-sm border-0 text-center text-success">
+                                <h6>الإجمالي</h6>
+                                <h3 id="statTotal">0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card p-3 shadow-sm border-0 text-center text-danger">
+                                <h6>تنبيهات المراجعة</h6>
+                                <h3 id="statRisk">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<div class="edit-tip shadow-sm animate__animated animate__fadeIn">
+    <i class="fas fa-mouse me-2 text-warning"></i>
+    <strong>معلومة:</strong> يمكنك النقر <strong>مرتين (Double Click)</strong> على أي 
+    <span class="badge bg-light text-dark border">اسم</span> أو 
+    <span class="badge bg-light text-dark border">مبلغ</span> في الجدول لتعديله فوراً.
+</div>
+                <div class="col-12 d-none" id="tableArea">
+                    <div class="card dashboard-card">
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle mb-0" id="mainTable">
+                                <thead class="table-dark sticky-header">
+                                    <tr>
+                                        <th>م</th>
+                                        <th>اسم المستلم (نقر مزدوج)</th>
+                                        <th>رقم الهاتف</th>
+                                        <th>المبلغ (نقر مزدوج)</th>
+                                        <th>الملاحظات الإضافية</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableContent"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <p class="text-muted small mt-2 text-center">💡 تلميح: <strong>حدد المربع</strong> لشطب الحوالة وخصمها من الإجمالي | <strong>نقرة واحدة</strong> للنسخ</p>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover d-none" id="resultTable">
-            <thead>
+    <footer class="text-center">
+        <div class="container">
+                        <small>جميع الحقوق محفوظة لـ شركة الروضة للصرافة والتحويلات-© 2026 </small>
+
+            <p class="mb-0 fw-bold">تصميم وتطوير محمد احمد الشرفي</p>
+        </div>
+    </footer>
+
+    <script>
+        let globalData = [];
+
+        function normalizeText(text) {
+            return text.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+                .replace(/(\r\n|\n|\r)/gm, " ");
+        }
+
+        function cleanName(name) {
+            let c = name;
+            c = c.replace(/[0-9٠-٩./().،,*\-_:]/g, " ");
+            c = c.replace(/\s+/g, " ");
+            c = c.replace(/(الاسم|المستلم|باسم|حوالة|للاخ|للأخ|حواله|ارسل|أرسل|طرف)\s*[:\s]/g, " ");
+            c = c.replace(/(ريال|ألف|الف)\s+يمني/g, "$1");
+            const exactWords = ['ألف', 'الف', 'ريال', 'حول', 'حوله', 'حولة', 'فقط', 'لاغير', 'من', 'إلى', 'الى', 'يمني', 'حواله', 'سعودي', 'دولار'];
+            const regexExact = new RegExp(`(^|\\s)(${exactWords.join('|')})(\\s|$)`, 'g');
+            c = c.replace(regexExact, " ");
+            c = c.replace(regexExact, " ");
+            return c.replace(/\s+/g, ' ').trim();
+        }
+
+        function analyzeData() {
+            const input = document.getElementById('rawInput').value;
+            if (!input.trim()) return Swal.fire('خطأ', 'الرجاء إدخال البيانات', 'error');
+
+            const normalizedInput = normalizeText(input);
+            const results = [];
+            const phoneRegex = /(7\d{8})/g;
+
+            let segments = normalizedInput.split(phoneRegex);
+
+            for (let i = 1; i < segments.length; i += 2) {
+                let phone = segments[i];
+                let before = segments[i - 1] || "";
+                let after = segments[i + 1] || "";
+                
+                let lines = before.split(/[\n/]/).map(l => l.trim()).filter(l => l.length > 0);
+                let rawNameLine = lines.length > 0 ? lines[lines.length - 1] : "";
+                let cleanedNameLine = cleanName(rawNameLine);
+                let words = cleanedNameLine.split(/\s+/).filter(w => w.length > 0);
+
+                let name = "";
+                let extraNameNotes = "";
+                if (words.length > 5) {
+                    name = words.slice(0, 5).join(" ");
+                    extraNameNotes = words.slice(5).join(" ");
+                } else {
+                    name = words.join(" ");
+                }
+
+                let amount = 0;
+                let amountMatch = (before + " " + after).match(/(\d+)\s*(?:ألف|الف)/);
+                if (amountMatch) {
+                    amount = parseFloat(amountMatch[1]) * 1000;
+                } else {
+                    let nums = (before + " " + after).match(/\b\d{3,}\b/g); 
+                    if (nums) {
+                        let filteredNums = nums.filter(n => n !== phone);
+                        if (filteredNums.length > 0) amount = Math.max(...filteredNums.map(n => parseFloat(n)));
+                    }
+                }
+
+                let note = "";
+                let contextNoteMatch = (before + " " + after).match(/\(([^)]+)\)/) || (before + " " + after).match(/(?:بيان|غرض|ملاحظة)\s*[:]\s*([\u0600-\u06FF\s]+)/);
+                if (contextNoteMatch) note = contextNoteMatch[1] || contextNoteMatch[0];
+
+                let finalNote = [extraNameNotes, note].filter(n => n && n.trim() !== "").join(" | ");
+
+                results.push({ name: name || "غير محدد", phone, amount, note: finalNote });
+            }
+
+            globalData = results;
+            renderData();
+        }
+
+        function renderData() {
+            const tbody = document.getElementById('tableContent');
+            tbody.innerHTML = "";
+            let total = 0, riskCount = 0;
+
+            globalData.forEach((item, index) => {
+                total += item.amount;
+
+                const isNameRisk = item.name.length < 8 || item.name === "غير محدد";
+                const isPhoneRisk = !/^7\d{8}$/.test(item.phone);
+                const isAmountRisk = item.amount <= 0 || item.amount >= 100000;
+
+                if (isNameRisk || isAmountRisk || isPhoneRisk) riskCount++;
+
+                tbody.innerHTML += `
                 <tr>
-                    <th>المرسل <button class="copy-col-btn" onclick="copyColumn(0)" title="نسخ العمود">📋</button></th>
-                    <th>رقم الحساب <button class="copy-col-btn" onclick="copyColumn(1)" title="نسخ العمود">📋</button></th>
-                    <th>هاتف م. <button class="copy-col-btn" onclick="copyColumn(2)" title="نسخ العمود">📋</button></th>
-                    <th>المبلغ <button class="copy-col-btn" onclick="copyColumn(3)" title="نسخ العمود">📋</button></th>
-
-                    <th>الاسم كامل <button class="copy-col-btn" onclick="copyColumn(4)" title="نسخ العمود">📋</button></th>
-                    <th>تلفون المستلم <button class="copy-col-btn" onclick="copyColumn(5)" title="نسخ العمود">📋</button></th>
-                    <th>ملاحظات</th>
-                    <th>الحالة</th> 
-                    <th>إجراء</th>
+                    <td class="text-center">${index + 1}</td>
+                    <td class="editable ${isNameRisk ? 'invalid-data' : ''}" 
+                        title="${isNameRisk ? 'الاسم قصير جداً أو غير محدد' : ''}"
+                        ondblclick="editCell(this, ${index}, 'name')">${item.name}</td>
+                    <td class="text-center ${isPhoneRisk ? 'invalid-data' : ''}" 
+                        title="${isPhoneRisk ? 'رقم الهاتف غير صحيح' : ''}">${item.phone}</td>
+                    <td class="editable text-center fw-bold ${isAmountRisk ? 'invalid-data' : ''}" 
+                        title="${item.amount >= 100000 ? 'مبلغ كبير يحتاج مراجعة' : (item.amount <= 0 ? 'المبلغ غير صحيح' : '')}"
+                        ondblclick="editCell(this, ${index}, 'amount')">${item.amount.toLocaleString()}</td>
+                    <td><span class="text-muted" style="font-size:0.9rem">${item.note || '-'}</span></td>
                 </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-    </div>
-</div>
-<footer>
-    <div class="footer-container">
-    <div class="brand-footer">
-       شركة الروضة للصرافة والتحويلات المالية -2026 © 
-    </div>
-    <div class="dev-footer">
-        تصميم وتطوير: محمد أحمد الشرفي
-    </div>
-</div>
-</footer>
-<div id="toast">✅ تم النسخ إلى الحافظة!</div>
+            `;
+            });
 
-<script>
-    // 🛡️ [تعديل أمني] دالة لتنظيف النصوص ومنع ثغرة (XSS) عند لصق الأكواد الخبيثة
-    function escapeHTML(str) {
-        if (!str) return "";
-        return str.toString().replace(/[&<>'"]/g, 
-            tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag] || tag)
-        );
-    }
-
-    // --- وظائف الحفظ والاكمال التلقائي الذكي ---
-    
-    // دالة لحفظ الربط بين الاسم والحساب والهاتف (يتم استدعاؤها عند الضغط على تحليل)
-    function saveToSenderDatabase() {
-        const name = document.getElementById('mainSenderName').value.trim();
-        const account = document.getElementById('mainSenderAccount').value.trim();
-        const phone = document.getElementById('mainSenderPhone').value.trim();
-
-        if (!name || name === "-" || name === "") return;
-
-        let db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
-
-        // تخزين البيانات مربوطة بالاسم
-        db[name] = {
-            account: account.replace(' /', ''),
-            phone: phone
-        };
-
-        localStorage.setItem('senderDatabase', JSON.stringify(db));
-        updateDatalists();
-    }
-
-    // دالة التعبئة التلقائية
-    function autoFillSenderInfo() {
-        const nameInput = document.getElementById('mainSenderName').value;
-        const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
-        
-        if (db[nameInput]) {
-            document.getElementById('mainSenderAccount').value = db[nameInput].account;
-            document.getElementById('mainSenderPhone').value = db[nameInput].phone;
+            document.getElementById('tableArea').classList.remove('d-none');
+            document.getElementById('statsArea').classList.remove('d-none');
+            document.getElementById('exportExcel').classList.remove('d-none');
+            document.getElementById('statCount').innerText = globalData.length;
+            document.getElementById('statTotal').innerText = total.toLocaleString() + " ريال";
+            document.getElementById('statRisk').innerText = riskCount;
         }
-    }
 
-    function loadSavedData() {
-        updateDatalists();
-    }
-
-    function updateDatalists() {
-        const db = JSON.parse(localStorage.getItem('senderDatabase') || '{}');
-        const namesList = document.getElementById('namesList');
-        if (namesList) {
-            namesList.innerHTML = Object.keys(db).map(n => `<option value="${escapeHTML(n)}">`).join('');
+        function editCell(cell, index, field) {
+            const originalValue = globalData[index][field];
+            cell.innerHTML = `<input type="text" class="edit-input" value="${originalValue}" onblur="saveCell(this, ${index}, '${field}')" onkeydown="checkKey(event, this, ${index}, '${field}')">`;
+            cell.querySelector('input').focus();
         }
-    }
 
-    function clearHistory() {
-        if(confirm("هل تريد مسح سجل الأسماء والروابط المحفوظة؟")) {
-            localStorage.removeItem('senderDatabase');
-            updateDatalists();
-            document.getElementById('mainSenderName').value = "";
-            document.getElementById('mainSenderAccount').value = "";
-            document.getElementById('mainSenderPhone').value = "";
-            alert("تم مسح السجل بنجاح");
+        function saveCell(input, index, field) {
+            let val = input.value.trim();
+            if (field === 'amount') val = parseFloat(val.replace(/,/g, "")) || 0;
+            globalData[index][field] = val;
+            renderData();
         }
-    }
 
-    // --- وظيفة مسح الصفحة بالكامل ---
-    function resetPage() {
-        if(confirm("هل أنت متأكد من مسح جميع البيانات الحالية للبدء من جديد؟")) {
-            // مسح حقول الإدخال
-            document.getElementById('inputText').value = "";
-            document.getElementById('mainSenderName').value = "";
-            document.getElementById('mainSenderAccount').value = "";
-            document.getElementById('mainSenderPhone').value = "";
-            
-            // مسح محتوى الجدول
-            document.getElementById('tableBody').innerHTML = "";
-            
-            // إخفاء الجدول والأدوات
-            document.getElementById('resultTable').classList.add('d-none');
-            document.getElementById('dashboard').classList.add('d-none');
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.add('d-none'));
-            
-            // إعادة ضبط العدادات
-            updateTotals();
-            
-            // رسالة تنبيه
-            document.getElementById("toast").innerText = "🧹 تم مسح كافة البيانات";
-            showToast();
+        function checkKey(e, input, index, field) {
+            if (e.key === 'Enter') saveCell(input, index, field);
         }
-        // إعادة إخفاء زر التحليل عند المسح
-document.getElementById('analyzeBtn').classList.add('d-none');
-    }
 
-    // --- وظيفة نسخ العمود ---
-    function copyColumn(index) {
-        const rows = document.querySelectorAll("#tableBody tr");
-        let colData = [];
-        rows.forEach(row => {
-            if (row.style.display !== 'none') {
-                let cellText = row.cells[index].innerText.replace(' /', '').trim();
-                colData.push(cellText);
-            }
-        });
-        if (colData.length > 0) {
-            navigator.clipboard.writeText(colData.join('\n')).then(() => {
-                const toast = document.getElementById("toast");
-                toast.innerText = "✅ تم نسخ العمود بنجاح!";
-                showToast();
+        function copyColumn(type) {
+            let text = globalData.map(item => {
+                if(type === 'name') return item.name;
+                if(type === 'amount') return item.amount;
+                if(type === 'phone') return item.phone;
+            }).join('\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                let msg = type === 'name' ? 'الأسماء' : (type === 'amount' ? 'المبالغ' : 'الهواتف');
+                Swal.fire({ title: 'تم النسخ!', text: `تم نسخ عمود ${msg}`, icon: 'success', timer: 1000, showConfirmButton: false });
             });
         }
-    }
 
-    // --- الوظائف الأصلية للمعالجة ---
-    function normalizeNumbers(text) {
-        return text.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
-    }
-
-    function splitIntoRecords(rawText) {
-        let text = normalizeNumbers(rawText);
-        let lines = text.split('\n');
-        let records = [];
-        let currentRecord = "";
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i].trim();
-            if (line === "") {
-                if (currentRecord !== "") { records.push(currentRecord); currentRecord = ""; }
-                continue;
-            }
-            let hasPhone = /7\d{8}/.test(currentRecord);
-            let lineHasPhone = /7\d{8}/.test(line);
-            if (hasPhone && lineHasPhone) {
-                records.push(currentRecord);
-                currentRecord = line;
-            } else {
-                currentRecord += (currentRecord ? " " : "") + line;
-            }
-        }
-        if (currentRecord !== "") records.push(currentRecord);
-        return records;
-    }
-
-    function parseRecord(recordText) {
-        let text = recordText.replace(/[\.\-\(\)]/g, ' ').replace(/\s+/g, ' ').trim();
-        let phone = "", amount = "0", name = "", notes = [];
-        let phoneMatch = text.match(/\b(7\d{8})\b/);
-        if (phoneMatch) { phone = phoneMatch[1]; text = text.replace(phoneMatch[1], ' '); }
-
-        let transferRegex = /(?:\d+(?:[,،]\d+)?\s*(?:الف|ألف)?\s*)?(?:الى|إلى)\s*([^\s\d]+)/g;
-        let tMatch;
-        while ((tMatch = transferRegex.exec(text)) !== null) {
-            notes.push(tMatch[0]);
-            text = text.replace(tMatch[0], ' ');
+        function toggleDarkMode() {
+            const body = document.body;
+            const current = body.getAttribute('data-bs-theme');
+            body.setAttribute('data-bs-theme', current === 'light' ? 'dark' : 'light');
         }
 
-        let amountMatch = text.match(/(?:حوله\s*)?(\d+(?:[,،]\d+)?)(?:\s*(الف|ألف))?/);
-        if (amountMatch) {
-            let numStr = amountMatch[1].replace(/[,،]/g, ''); 
-            let num = parseFloat(numStr);
-            let hasAlf = amountMatch[2] !== undefined || text.includes('الف') || text.includes('ألف');
-            if (hasAlf && num < 1000) num = num * 1000;
-            amount = num.toString();
-            text = text.replace(amountMatch[0], ' ');
+        function wipeAllData() {
+            Swal.fire({
+                title: 'مسح أمني شامل؟',
+                text: "سيتم إفراغ الذاكرة تماماً وإعادة ضبط النظام",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، امسح'
+            }).then(r => { if (r.isConfirmed) location.reload(); });
         }
 
-        let ignoreWords = ['الف', 'ألف', 'يمني', 'حوله', 'حول','حواله','حوالة'];
-        let words = text.split(/\s+/).filter(w => w);
-        let nameWords = [];
-        words.forEach(w => {
-            if (/^[\u0600-\u06FF]+$/.test(w) && !ignoreWords.includes(w)) {
-                nameWords.push(w);
-            } else if (w && !ignoreWords.includes(w)) {
-                notes.push(w);
-            }
-        });
-        return { amount: amount || "0", name: nameWords.join(' ') || "غير محدد", phone: phone || "غير محدد", notes: notes };
-    }
-
-    function formatText() {
-        const textarea = document.getElementById('inputText');
-        const rawText = textarea.value;
-        if (!rawText.trim()) return;
-        const records = splitIntoRecords(rawText);
-        let formattedText = "";
-        records.forEach(record => {
-            const data = parseRecord(record);
-            let noteStr = data.notes.length > 0 ? ` (ملاحظات: ${data.notes.join(' - ')})` : "";
-            formattedText += `${data.amount} - ${data.name} - ${data.phone}${noteStr}\n`;
-        });
-        textarea.value = formattedText;
-        // إظهار زر التحليل بعد نجاح عملية التنسيق
-document.getElementById('analyzeBtn').classList.remove('d-none');
-    }
-
-    function analyzeAndBuildTable() {
-        const rawText = document.getElementById('inputText').value;
-        if (!rawText.trim()) return;
-
-        const mainSender = document.getElementById('mainSenderName').value || "-";
-        const mainAcc = document.getElementById('mainSenderAccount').value;
-        const mainPhone = document.getElementById('mainSenderPhone').value || "-";
-        const formattedAcc = mainAcc ? mainAcc + " /" : "-";
-
-        saveToSenderDatabase();
-
-        const records = splitIntoRecords(rawText);
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = ""; 
-
-        records.forEach(record => {
-            const data = parseRecord(record);
-            
-            // 🛡️ [تعديل أمني] تنظيف الملاحظات لمنع ثغرة XSS
-            let notesHtml = data.notes.length > 0 
-                ? data.notes.map(n => `<span class="note-badge">${escapeHTML(n)}</span>`).join('') 
-                : '<span class="text-muted">لا يوجد</span>';
-
-            // 🛡️ [تعديل أمني] تنظيف المتغيرات داخل الجدول لمنع ثغرة XSS
-            const row = `<tr>
-                <td class="interactive-cell">${escapeHTML(mainSender)}</td>
-                <td class="interactive-cell">${escapeHTML(formattedAcc)}</td>
-                <td class="interactive-cell text-secondary">${escapeHTML(mainPhone)}</td>
-                <td class="interactive-cell fw-bold text-success amount-cell">${escapeHTML(data.amount)}</td>
-                <td class="interactive-cell fw-bold name-cell">${escapeHTML(data.name)}</td>
-                <td class="interactive-cell text-primary fw-bold phone-cell" dir="ltr">${escapeHTML(data.phone)}</td>
-                <td>${notesHtml}</td>
-                <td class="text-center">
-                    <input type="checkbox" class="form-check-input" style="cursor:pointer; transform: scale(1.3);" onchange="toggleRowStatus(this)" title="حدد إذا تم التحويل">
-                </td>
-                <td><button class="btn btn-sm btn-outline-danger border-0" onclick="deleteRow(this)">🗑️</button></td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        });
-
-        document.getElementById('resultTable').classList.remove('d-none');
-        document.getElementById('dashboard').classList.remove('d-none');
-        document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('d-none'));
-        updateTotals();
-    }
-
-    function toggleRowStatus(checkbox) {
-        const row = checkbox.closest('tr');
-        if (checkbox.checked) {
-            row.classList.add('completed-row');
-        } else {
-            row.classList.remove('completed-row');
+        function exportToExcel() {
+            const wb = XLSX.utils.table_to_book(document.getElementById("mainTable"), { sheet: "الحوالات المفرزة" });
+            XLSX.writeFile(wb, `تقرير_حوالات_${new Date().toLocaleDateString()}.xlsx`);
         }
-        updateTotals();
-    }
-
-    const tableBody = document.getElementById('tableBody');
-    tableBody.addEventListener('click', function(e) {
-        if (e.target.classList.contains('interactive-cell')) {
-            if (e.target.getAttribute('contenteditable') === 'true') return;
-            if (e.target.closest('tr').classList.contains('completed-row')) return;
-            
-            let textToCopy = e.target.innerText.replace(' /', '').trim();
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                document.getElementById("toast").innerText = "✅ تم النسخ إلى الحافظة!";
-                showToast();
-            });
-        }
-    });
-
-    tableBody.addEventListener('dblclick', function(e) {
-        if (e.target.classList.contains('interactive-cell')) {
-            if (e.target.closest('tr').classList.contains('completed-row')) return;
-            
-            e.target.setAttribute('contenteditable', 'true');
-            e.target.focus();
-            document.execCommand('selectAll', false, null);
-        }
-    });
-
-    tableBody.addEventListener('focusout', saveEdit);
-    tableBody.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
-    });
-
-    function saveEdit(e) {
-        if (e.target.classList.contains('interactive-cell') && e.target.getAttribute('contenteditable') === 'true') {
-            e.target.setAttribute('contenteditable', 'false');
-            updateTotals();
-        }
-    }
-
-    function showToast() {
-        const toast = document.getElementById("toast");
-        toast.className = "show";
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
-    }
-
-    function deleteRow(btn) {
-        if(confirm("هل أنت متأكد من الحذف؟")) {
-            btn.closest('tr').remove();
-            updateTotals();
-        }
-    }
-
-    function updateTotals() {
-        let total = 0, count = 0;
-        const amountCells = document.querySelectorAll('.amount-cell');
-        amountCells.forEach(cell => {
-            const row = cell.closest('tr');
-            if (row.style.display !== 'none' && !row.classList.contains('completed-row')) {
-                let val = parseFloat(cell.innerText.replace(/,/g, ''));
-                if (!isNaN(val)) total += val;
-                count++;
-            }
-        });
-        document.getElementById('totalAmount').innerText = total.toLocaleString();
-        document.getElementById('totalCount').innerText = count;
-    }
-
-    function filterTable() {
-        const input = document.getElementById("searchInput").value.toLowerCase();
-        const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let i = 0; i < rows.length; i++) {
-            let rowText = rows[i].innerText.toLowerCase();
-            rows[i].style.display = rowText.includes(input) ? "" : "none";
-        }
-        updateTotals();
-    }
-    
-    function exportTableToCSV() {
-    // 1. إضافة الـ BOM لدعم اللغة العربية (UTF-8) لفتح الملف مباشرة في إكسل
-    let csv = '\uFEFF'; 
-    const separator = ';'; // الفاصلة المنقوطة لضمان توافق الأعمدة في النسخ العربية
-    
-    // عناوين الأعمدة
-    const headers = ["المرسل", "رقم الحساب", "هاتف المرسل", "المبلغ", "الاسم كامل", "تلفون المستلم", "ملاحظات", "الحالة"];
-    csv += headers.join(separator) + "\n";
-
-    const rows = document.querySelectorAll("#resultTable tbody tr");
-    
-    // متغيرات لتخزين بيانات أول صف لاستخدامها في اسم الملف
-    let fileNameSenderName = "كشف";
-    let fileNameSenderAccount = "";
-    let foundFirstRow = false;
-
-    for (let i = 0; i < rows.length; i++) {
-        if (rows[i].style.display === 'none') continue; // تخطي الصفوف المخفية نتيجة البحث
-        
-        let rowData = [];
-        let cols = rows[i].querySelectorAll("td");
-        
-        // استخراج بيانات الملف من أول صف ظاهر (اسم المرسل ورقم حسابه)
-        if (!foundFirstRow) {
-            fileNameSenderName = cols[0].innerText.trim();
-            fileNameSenderAccount = cols[1].innerText.replace(/\//g, '').trim(); // تنظيف رقم الحساب لاسم الملف
-            foundFirstRow = true;
-        }
-
-        // معالجة بيانات الأعمدة
-        for (let j = 0; j <= 6; j++) {
-            if (cols[j]) {
-                let text = cols[j].innerText.replace('📋', '').trim();
-                
-                // 🛡️ [تعديل أمني] منع ثغرة حقن ملفات الإكسل (CSV Injection)
-                // إذا كان النص يبدأ بعلامات مثل = أو + نقوم بإضافة علامة اقتباس مفردة ليقرأه الإكسل كنص
-                if (/^[=+\-@]/.test(text)) {
-                    text = "'" + text;
-                }
-                
-                // تنسيق رقم الحساب (العمود رقم 1)
-                if (j === 1) { 
-                    // أولاً: حذف أي علامات مائلة موجودة مسبقاً لمنع التكرار //
-                    let cleanAcc = text.replace(/\//g, '').trim();
-                    // ثانياً: إضافة علامة مائلة واحدة فقط على اليسار
-                    text = "/ " + cleanAcc; 
-                }
-                
-                // تنظيف النص من علامات الاقتباس وتجهيزه للخلايا
-                rowData.push('"' + text.replace(/"/g, '""') + '"');
-            }
-        }
-        
-        // إضافة الحالة (تم التحويل / قيد الانتظار)
-        const checkbox = cols[7].querySelector('input[type="checkbox"]');
-        const status = checkbox && checkbox.checked ? "تم التحويل" : "قيد الانتظار";
-        rowData.push('"' + status + '"');
-
-        csv += rowData.join(separator) + "\n";
-    }
-    
-    // إعداد اسم الملف: (اسم المرسل - رقم الحساب - التاريخ)
-    const today = new Date();
-    const dateStr = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    
-    // تنظيف اسم الملف من أي رموز قد تمنع الحفظ
-    const safeSenderName = fileNameSenderName.replace(/[\\/:*?"<>|]/g, '');
-    const finalFileName = `${safeSenderName} - ${fileNameSenderAccount} - ${dateStr}.csv`;
-
-    // إنشاء وتحميل الملف
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.setAttribute("href", URL.createObjectURL(blob));
-    link.setAttribute("download", finalFileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-</script>
+    </script>
 </body>
+
 </html>
